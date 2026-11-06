@@ -1,0 +1,6 @@
+{"processed_frames": 1, "pending_uploads": 0, "results": "YOLOv5/runs/evidence-next/results.json"}
+/Users/gimseung-won/mwp-middle02/mwp-middleexam02/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO Queued new appearance: person event=59bd8bd61f41463690acbfc6cc30d94d
+INFO Created server post id=3 event=59bd8bd61f41463690acbfc6cc30d94d
+INFO frame=1 detected=person,person,person,bus uploaded=1 inference_ms=107.69

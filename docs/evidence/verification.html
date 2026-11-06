@@ -1,0 +1,276 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><title>공통평가 02 · 실행 증빙</title>
+<style>body{background:#f3f6fa;color:#14213d;font:16px -apple-system,BlinkMacSystemFont,sans-serif;margin:0;padding:48px;max-width:1400px}h1{font-size:36px}h2{font-size:25px}header p{color:#637187}section{background:white;padding:28px;border-radius:18px;margin:26px 0;border:1px solid #dbe3eb}section p{color:#66758a}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#152238;color:#d8e6f2;padding:24px;border-radius:12px;font:13px/1.6 Menlo,monospace}</style>
+<header><p>모바일/웹서비스 프로젝트 · 공통평가 02</p><h1>실행 증빙 기록</h1><p>아래 내용은 실제 명령과 HTTP 요청으로 생성한 로그입니다. 인증 정보는 저장하지 않았습니다.</p></header>
+<section><h2>Django 자동 테스트</h2><p>docs/evidence/backend-tests.txt</p><pre>Runtime: Python 3.12 / Django 5.2.19 / DRF 3.18.3
+
+$ ../.venv-server/bin/python manage.py test blog --verbosity 2
+Found 14 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, rest_framework, staticfiles
+  Apply all migrations: admin, auth, blog, contenttypes, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying blog.0001_initial... OK
+  Applying sessions.0001_initial... OK
+System check identified no issues (0 silenced).
+Creating test database for alias &#x27;default&#x27; (&#x27;file:memorydb_default?mode=memory&amp;cache=shared&#x27;)...
+test_acknowledge_is_idempotent (blog.tests.ServerTests.test_acknowledge_is_idempotent) ... ok
+test_another_user_cannot_list_read_edit_delete_or_acknowledge (blog.tests.ServerTests.test_another_user_cannot_list_read_edit_delete_or_acknowledge) ... ok
+test_api_login_rate_limit (blog.tests.ServerTests.test_api_login_rate_limit) ... ok
+test_api_requires_authentication (blog.tests.ServerTests.test_api_requires_authentication) ... ok
+test_bearer_header_accepted (blog.tests.ServerTests.test_bearer_header_accepted) ... ok
+test_expired_and_tampered_jwt_rejected (blog.tests.ServerTests.test_expired_and_tampered_jwt_rejected) ... ok
+test_health_has_no_private_data (blog.tests.ServerTests.test_health_has_no_private_data) ... ok
+test_inactive_user_token_is_rejected (blog.tests.ServerTests.test_inactive_user_token_is_rejected) ... ok
+test_invalid_missing_and_oversize_images_rejected (blog.tests.ServerTests.test_invalid_missing_and_oversize_images_rejected) ... ok
+test_login_returns_jwt_and_invalid_password_is_rejected (blog.tests.ServerTests.test_login_returns_jwt_and_invalid_password_is_rejected) ... ok
+test_multipart_upload_and_json_contract (blog.tests.ServerTests.test_multipart_upload_and_json_contract) ... ok
+test_search_and_unread_filters (blog.tests.ServerTests.test_search_and_unread_filters) ... ok
+test_web_login_feed_detail_and_acknowledge (blog.tests.ServerTests.test_web_login_feed_detail_and_acknowledge) ... ok
+test_web_upload_requires_csrf (blog.tests.ServerTests.test_web_upload_requires_csrf) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 1.908s
+
+OK
+Destroying test database for alias &#x27;default&#x27; (&#x27;file:memorydb_default?mode=memory&amp;cache=shared&#x27;)...
+
+exit_code=0
+
+$ ../.venv-server/bin/python manage.py check
+System check identified no issues (0 silenced).
+
+exit_code=0
+
+$ DJANGO_DEBUG=0 DJANGO_SECRET_KEY=[redacted] DJANGO_ALLOWED_HOSTS=asdfgh0986.pythonanywhere.com ../.venv-server/bin/python manage.py check --deploy
+System check identified some issues:
+
+WARNINGS:
+?: (security.W005) You have not set the SECURE_HSTS_INCLUDE_SUBDOMAINS setting to True. Without this, your site is potentially vulnerable to attack via an insecure connection to a subdomain. Only set this to True if you are certain that all subdomains of your domain should be served exclusively via SSL.
+?: (security.W021) You have not set the SECURE_HSTS_PRELOAD setting to True. Without this, your site cannot be submitted to the browser preload list.
+
+System check identified 2 issues (0 silenced).
+
+exit_code=0
+</pre></section>
+<section><h2>엣지 출현 변화·전송 테스트</h2><p>YOLOv5/evidence/tests.txt</p><pre>Executed at 2026-11-06T08:12:58.263698+00:00
+Python 3.9.6 / macOS-26.6.2-arm64-arm-64bit
+Command: .venv/bin/python -m unittest discover -s YOLOv5/tests -v
+
+/Users/gimseung-won/mwp-middle02/mwp-middleexam02/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the &#x27;ssl&#x27; module is compiled with &#x27;LibreSSL 2.8.3&#x27;. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+test_disappearance_then_reappearance_uploads_again (test_changedetection.TransitionTests) ... ok
+test_expired_token_is_refreshed_once (test_changedetection.TransitionTests) ... ok
+test_failed_upload_is_retried_when_presence_is_held (test_changedetection.TransitionTests) ... Upload pending event=c8bfabc6142945639cfb3e0dd266bc71 (ConnectionError)
+ok
+test_instances_do_not_share_previous_state (test_changedetection.TransitionTests) ... ok
+test_mismatched_presence_vector_rejected (test_changedetection.TransitionTests) ... ok
+test_new_presence_uploads_once_and_held_presence_is_suppressed (test_changedetection.TransitionTests) ... ok
+test_non_monitored_class_does_not_upload (test_changedetection.TransitionTests) ... ok
+test_restart_can_flush_persisted_event_without_a_new_transition (test_changedetection.TransitionTests) ... Upload pending event=6ee58b19e0d044e3a82d7fc42475056f (HTTPError)
+ok
+test_official_bus_image_detects_people_and_bus (test_inference.RealInferenceTests) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.199s
+
+OK
+</pre></section>
+<section><h2>실제 YOLO 추론·서버 업로드</h2><p>docs/evidence/edge-integration.json</p><pre>{
+  &quot;started_at&quot;: &quot;2026-11-06T08:14:13.511698+00:00&quot;,
+  &quot;engine&quot;: &quot;OpenCV DNN / official YOLOv5n v7.0 ONNX&quot;,
+  &quot;source&quot;: &quot;YOLOv5/data/bus.jpg&quot;,
+  &quot;weights_sha256&quot;: &quot;04f0e55c26f58d17145b36045780fe1250d5bd2187543e11568e5141d05b3262&quot;,
+  &quot;confidence_threshold&quot;: 0.4,
+  &quot;iou_threshold&quot;: 0.45,
+  &quot;monitored_classes&quot;: [
+    &quot;person&quot;
+  ],
+  &quot;upload_enabled&quot;: true,
+  &quot;pending_uploads&quot;: 0,
+  &quot;processed_frames&quot;: 1,
+  &quot;frames&quot;: [
+    {
+      &quot;frame&quot;: 1,
+      &quot;inference_ms&quot;: 93.18,
+      &quot;detections&quot;: [
+        {
+          &quot;class_id&quot;: 0,
+          &quot;name&quot;: &quot;person&quot;,
+          &quot;confidence&quot;: 0.822809,
+          &quot;xyxy&quot;: [
+            219,
+            408,
+            349,
+            863
+          ]
+        },
+        {
+          &quot;class_id&quot;: 0,
+          &quot;name&quot;: &quot;person&quot;,
+          &quot;confidence&quot;: 0.815568,
+          &quot;xyxy&quot;: [
+            52,
+            399,
+            207,
+            895
+          ]
+        },
+        {
+          &quot;class_id&quot;: 0,
+          &quot;name&quot;: &quot;person&quot;,
+          &quot;confidence&quot;: 0.675583,
+          &quot;xyxy&quot;: [
+            681,
+            377,
+            810,
+            870
+          ]
+        },
+        {
+          &quot;class_id&quot;: 5,
+          &quot;name&quot;: &quot;bus&quot;,
+          &quot;confidence&quot;: 0.526095,
+          &quot;xyxy&quot;: [
+            49,
+            237,
+            810,
+            772
+          ]
+        }
+      ],
+      &quot;uploaded&quot;: [
+        {
+          &quot;event_id&quot;: &quot;84283c41c67948fd81f30d2120721927&quot;,
+          &quot;post_id&quot;: 2
+        }
+      ]
+    }
+  ],
+  &quot;verified_post&quot;: {
+    &quot;id&quot;: 2,
+    &quot;title&quot;: &quot;person&quot;,
+    &quot;text&quot;: &quot;새 객체 출현: person\nEdge event: 84283c41c67948fd81f30d2120721927&quot;,
+    &quot;image&quot;: &quot;http://127.0.0.1:8000/media/detections/2026/11/06/e549f384147e4817916a62ea2028fa3e.jpg&quot;,
+    &quot;author&quot;: &quot;guardian&quot;,
+    &quot;acknowledged&quot;: false
+  },
+  &quot;verification&quot;: {
+    &quot;detail_status&quot;: 200,
+    &quot;photo_status&quot;: 200,
+    &quot;photo_dimensions&quot;: [
+      320,
+      240
+    ],
+    &quot;photo_format&quot;: &quot;JPEG&quot;,
+    &quot;unread&quot;: true,
+    &quot;username&quot;: &quot;guardian&quot;
+  }
+}</pre></section>
+<section><h2>실제 HTTP 통합 검증</h2><p>docs/evidence/integration.json</p><pre>{
+  &quot;captured_at_utc&quot;: &quot;2026-11-06T08:13:28.699535+00:00&quot;,
+  &quot;base_url&quot;: &quot;http://127.0.0.1:8000&quot;,
+  &quot;result&quot;: &quot;PASS&quot;,
+  &quot;checks&quot;: [
+    {
+      &quot;check&quot;: &quot;health&quot;,
+      &quot;status&quot;: 200,
+      &quot;expected&quot;: 200
+    },
+    {
+      &quot;check&quot;: &quot;anonymous_rejected&quot;,
+      &quot;status&quot;: 401,
+      &quot;expected&quot;: 401
+    },
+    {
+      &quot;check&quot;: &quot;jwt_login&quot;,
+      &quot;status&quot;: 200,
+      &quot;expected&quot;: 200
+    },
+    {
+      &quot;check&quot;: &quot;multipart_upload&quot;,
+      &quot;status&quot;: 201,
+      &quot;expected&quot;: 201
+    },
+    {
+      &quot;check&quot;: &quot;lecture_json_array&quot;,
+      &quot;status&quot;: 200,
+      &quot;expected&quot;: 200
+    },
+    {
+      &quot;check&quot;: &quot;search&quot;,
+      &quot;status&quot;: 200,
+      &quot;expected&quot;: 200
+    },
+    {
+      &quot;check&quot;: &quot;unread_before&quot;,
+      &quot;status&quot;: 200,
+      &quot;expected&quot;: 200
+    },
+    {
+      &quot;check&quot;: &quot;acknowledge&quot;,
+      &quot;status&quot;: 200,
+      &quot;expected&quot;: 200
+    },
+    {
+      &quot;check&quot;: &quot;unread_after&quot;,
+      &quot;status&quot;: 200,
+      &quot;expected&quot;: 200
+    },
+    {
+      &quot;check&quot;: &quot;image_download&quot;,
+      &quot;status&quot;: 200,
+      &quot;expected&quot;: 200
+    }
+  ],
+  &quot;post_id&quot;: 1,
+  &quot;post&quot;: {
+    &quot;id&quot;: 1,
+    &quot;title&quot;: &quot;통합 검증 · person 출현&quot;,
+    &quot;text&quot;: &quot;실제 HTTP multipart 업로드·조회·검색·확인 처리 검증. 사진은 YOLOv5 검출 결과입니다.&quot;,
+    &quot;image&quot;: &quot;http://127.0.0.1:8000/media/detections/2026/11/06/f394467f33c241acb1ac7c70d2aaddb7.jpg&quot;,
+    &quot;created_date&quot;: &quot;2026-11-06T17:13:28.678534+09:00&quot;,
+    &quot;published_date&quot;: &quot;2026-11-06T17:13:28.678539+09:00&quot;,
+    &quot;author&quot;: &quot;guardian&quot;,
+    &quot;acknowledged&quot;: false
+  },
+  &quot;note&quot;: &quot;실행 중인 서버에 실제 HTTP 요청. 인증 정보는 기록하지 않음.&quot;
+}</pre></section>
+<section><h2>Android APK 빌드</h2><p>docs/evidence/android-build.txt</p><pre>{
+  &quot;command&quot;: &quot;JAVA_HOME=&#x27;/Applications/Android Studio.app/Contents/jbr/Contents/Home&#x27; ./gradlew --offline --no-daemon assembleDebug lintDebug&quot;,
+  &quot;result&quot;: &quot;BUILD SUCCESSFUL&quot;,
+  &quot;exit_code&quot;: 0,
+  &quot;duration_seconds_reported&quot;: 11,
+  &quot;tasks_reported&quot;: &quot;42 actionable tasks: 27 executed, 15 up-to-date&quot;,
+  &quot;gradle&quot;: &quot;8.14.3&quot;,
+  &quot;android_gradle_plugin&quot;: &quot;8.11.0&quot;,
+  &quot;compile_sdk&quot;: 36,
+  &quot;min_sdk&quot;: 27,
+  &quot;application_id&quot;: &quot;kr.ac.homeguard.photoviewer&quot;,
+  &quot;apk&quot;: &quot;app/build/outputs/apk/debug/app-debug.apk&quot;,
+  &quot;apk_bytes&quot;: 27915,
+  &quot;apk_sha256&quot;: &quot;840e1a48288f56f051c232477c50aaccfb49f8634ac70444aed9404a69ecedac&quot;,
+  &quot;runtime_test&quot;: &quot;Root agent coordinates actual emulator test; this file records build and lint only.&quot;
+}
+
+No issues found.
+</pre></section></html>

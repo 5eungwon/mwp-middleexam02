@@ -1,0 +1,22 @@
+{
+  "application": "Microsoft Visual Studio Code Desktop",
+  "version": "1.145.1",
+  "distribution": "Official macOS ARM64 stable archive from https://update.code.visualstudio.com/latest/darwin-arm64/stable",
+  "capture_method": "Playwright screenshot of the actual Electron workbench renderer over local DevTools 127.0.0.1:9234. No synthetic editor or skin. Source opened from local filesystem.",
+  "renderer_url": "vscode-file://vscode-app/private/tmp/homeguard-vscode/Visual%20Studio%20Code.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html",
+  "screenshots": [
+    {
+      "path": "docs/evidence/vscode-changedetection.png",
+      "source": "YOLOv5/changedetection.py",
+      "source_sha256": "d3c760e464a4b0b835f23805b220cd6654fbefb8954f093ca9b50b737a959a4d",
+      "visible_implementation": "Class-presence 0→1 test, durable upload path and authenticated multipart POST (split editor)"
+    },
+    {
+      "path": "docs/evidence/vscode-detect-integration.png",
+      "source": "YOLOv5/detect.py",
+      "source_sha256": "224ba658755f54a3c85c382d132fb05735551622c8aaad4757469a5975e4071d",
+      "visible_implementation": "ChangeDetection construction and per-frame add integration"
+    }
+  ],
+  "privacy": "Temporary profile with telemetry disabled and extensions disabled. Source was not uploaded to vscode.dev."
+}

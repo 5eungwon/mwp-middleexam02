@@ -1,0 +1,70 @@
+Runtime: Python 3.12 / Django 5.2.19 / DRF 3.18.3
+
+$ ../.venv-server/bin/python manage.py test blog --verbosity 2
+Found 14 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, rest_framework, staticfiles
+  Apply all migrations: admin, auth, blog, contenttypes, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying blog.0001_initial... OK
+  Applying sessions.0001_initial... OK
+System check identified no issues (0 silenced).
+Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+test_acknowledge_is_idempotent (blog.tests.ServerTests.test_acknowledge_is_idempotent) ... ok
+test_another_user_cannot_list_read_edit_delete_or_acknowledge (blog.tests.ServerTests.test_another_user_cannot_list_read_edit_delete_or_acknowledge) ... ok
+test_api_login_rate_limit (blog.tests.ServerTests.test_api_login_rate_limit) ... ok
+test_api_requires_authentication (blog.tests.ServerTests.test_api_requires_authentication) ... ok
+test_bearer_header_accepted (blog.tests.ServerTests.test_bearer_header_accepted) ... ok
+test_expired_and_tampered_jwt_rejected (blog.tests.ServerTests.test_expired_and_tampered_jwt_rejected) ... ok
+test_health_has_no_private_data (blog.tests.ServerTests.test_health_has_no_private_data) ... ok
+test_inactive_user_token_is_rejected (blog.tests.ServerTests.test_inactive_user_token_is_rejected) ... ok
+test_invalid_missing_and_oversize_images_rejected (blog.tests.ServerTests.test_invalid_missing_and_oversize_images_rejected) ... ok
+test_login_returns_jwt_and_invalid_password_is_rejected (blog.tests.ServerTests.test_login_returns_jwt_and_invalid_password_is_rejected) ... ok
+test_multipart_upload_and_json_contract (blog.tests.ServerTests.test_multipart_upload_and_json_contract) ... ok
+test_search_and_unread_filters (blog.tests.ServerTests.test_search_and_unread_filters) ... ok
+test_web_login_feed_detail_and_acknowledge (blog.tests.ServerTests.test_web_login_feed_detail_and_acknowledge) ... ok
+test_web_upload_requires_csrf (blog.tests.ServerTests.test_web_upload_requires_csrf) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 1.908s
+
+OK
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+
+exit_code=0
+
+$ ../.venv-server/bin/python manage.py check
+System check identified no issues (0 silenced).
+
+exit_code=0
+
+$ DJANGO_DEBUG=0 DJANGO_SECRET_KEY=[redacted] DJANGO_ALLOWED_HOSTS=asdfgh0986.pythonanywhere.com ../.venv-server/bin/python manage.py check --deploy
+System check identified some issues:
+
+WARNINGS:
+?: (security.W005) You have not set the SECURE_HSTS_INCLUDE_SUBDOMAINS setting to True. Without this, your site is potentially vulnerable to attack via an insecure connection to a subdomain. Only set this to True if you are certain that all subdomains of your domain should be served exclusively via SSL.
+?: (security.W021) You have not set the SECURE_HSTS_PRELOAD setting to True. Without this, your site cannot be submitted to the browser preload list.
+
+System check identified 2 issues (0 silenced).
+
+exit_code=0

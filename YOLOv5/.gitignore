@@ -1,0 +1,5 @@
+models/*.onnx
+models/*.pt
+runs/
+__pycache__/
+*.pyc

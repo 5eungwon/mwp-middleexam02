@@ -1,0 +1,7 @@
+{
+  "tag": "v7.0",
+  "commit": "915bbf294bb74c859f0b41f1c23bc395014ea679",
+  "archive_url": "https://codeload.github.com/ultralytics/yolov5/zip/refs/tags/v7.0",
+  "archive_sha256": "a40568a7979c4b27195d198987e49610de86b038b044f2521f5515455571f852",
+  "detect_py_sha256": "ba0175be184bd03632590b3d71b059f2e2df21569392bb9c5e18ff76292f9e60"
+}

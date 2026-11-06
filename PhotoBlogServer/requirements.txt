@@ -1,0 +1,4 @@
+Django==5.2.19
+djangorestframework==3.18.3
+PyJWT==2.15.1
+Pillow==13.0.0

@@ -1,0 +1,18 @@
+{
+  "command": "JAVA_HOME='/Applications/Android Studio.app/Contents/jbr/Contents/Home' ./gradlew --offline --no-daemon assembleDebug lintDebug",
+  "result": "BUILD SUCCESSFUL",
+  "exit_code": 0,
+  "duration_seconds_reported": 11,
+  "tasks_reported": "42 actionable tasks: 27 executed, 15 up-to-date",
+  "gradle": "8.14.3",
+  "android_gradle_plugin": "8.11.0",
+  "compile_sdk": 36,
+  "min_sdk": 27,
+  "application_id": "kr.ac.homeguard.photoviewer",
+  "apk": "app/build/outputs/apk/debug/app-debug.apk",
+  "apk_bytes": 27915,
+  "apk_sha256": "840e1a48288f56f051c232477c50aaccfb49f8634ac70444aed9404a69ecedac",
+  "runtime_test": "Root agent coordinates actual emulator test; this file records build and lint only."
+}
+
+No issues found.

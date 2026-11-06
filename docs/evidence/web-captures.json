@@ -1,0 +1,37 @@
+[
+  {
+    "file": "web-login.png",
+    "url": "http://127.0.0.1:8000/accounts/login/",
+    "title": "웹 로그인"
+  },
+  {
+    "file": "web-feed.png",
+    "url": "http://127.0.0.1:8000/",
+    "title": "검출 사진 웹 목록"
+  },
+  {
+    "file": "web-unread.png",
+    "url": "http://127.0.0.1:8000/?unread=1",
+    "title": "미확인 필터"
+  },
+  {
+    "file": "web-search.png",
+    "url": "http://127.0.0.1:8000/?search=person",
+    "title": "검색 결과"
+  },
+  {
+    "file": "web-api.png",
+    "url": "http://127.0.0.1:8000/api_root/Post/",
+    "title": "강의 JSON Array API"
+  },
+  {
+    "file": "web-detail.png",
+    "url": "http://127.0.0.1:8000/posts/2/",
+    "title": "YOLO 전송 사진 상세"
+  },
+  {
+    "file": "web-acknowledged.png",
+    "url": "http://127.0.0.1:8000/posts/2/",
+    "title": "Android 확인 처리 서버 반영"
+  }
+]

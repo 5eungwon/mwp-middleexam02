@@ -1,0 +1,6 @@
+{% extends 'blog/base.html' %}
+{% block title %}{{ post.title }} · 우리집 지킴이{% endblock %}
+{% block content %}
+<a class="back" href="{% url 'dashboard' %}">← 감지 기록으로 돌아가기</a>
+<div class="detail-grid"><div class="panel" style="padding:14px"><img class="detail-image" src="{{ post.image.url }}" alt="{{ post.title }} 검출 사진"></div><article class="panel"><p class="eyebrow">DETECTION RECORD #{{ post.id|stringformat:'04d' }}</p><h1 style="font-size:26px">{{ post.title }}</h1><span class="badge {% if post.acknowledged %}read{% endif %}">{% if post.acknowledged %}✓ 확인 완료{% else %}● 미확인 기록{% endif %}</span><dl class="detail-meta"><div><dt>검출 시각</dt><dd>{{ post.created_date|date:'Y년 m월 d일 H:i:s' }}</dd></div><div><dt>서버 등록 시각</dt><dd>{{ post.published_date|date:'Y년 m월 d일 H:i:s' }}</dd></div><div><dt>등록 계정</dt><dd>{{ post.author.username }}</dd></div></dl><div class="detail-text">{{ post.text }}</div>{% if not post.acknowledged %}<form action="{% url 'acknowledge' post.id %}" method="post" style="margin-top:28px">{% csrf_token %}<button class="primary" type="submit" style="width:100%">✓ 확인 완료로 표시</button></form>{% endif %}</article></div>
+{% endblock %}

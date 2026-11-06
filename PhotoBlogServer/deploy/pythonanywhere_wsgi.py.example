@@ -1,0 +1,22 @@
+"""Paste into PythonAnywhere's WSGI configuration, replacing YOUR_USERNAME.
+
+Create /home/YOUR_USERNAME/.config/home-guardian.json outside the repository:
+{"secret_key": "a-long-random-value", "allowed_hosts": "YOUR_USERNAME.pythonanywhere.com"}
+Run chmod 600 on that file. Never place actual credentials in this source file.
+"""
+import json
+import os
+import sys
+from pathlib import Path
+
+account_home = Path('/home/YOUR_USERNAME')
+project = account_home / 'mwp-middleexam02' / 'PhotoBlogServer'
+config = json.loads((account_home / '.config' / 'home-guardian.json').read_text())
+sys.path.insert(0, str(project))
+os.environ['DJANGO_SETTINGS_MODULE'] = 'photoblog.settings'
+os.environ['DJANGO_DEBUG'] = '0'
+os.environ['DJANGO_SECRET_KEY'] = config['secret_key']
+os.environ['DJANGO_ALLOWED_HOSTS'] = config['allowed_hosts']
+
+from django.core.wsgi import get_wsgi_application
+application = get_wsgi_application()

@@ -1,0 +1,8 @@
+{
+  "started_at": "2026-11-06T08:17:25.567224+00:00",
+  "command": ".venv-yolo/bin/python YOLOv5/upstream/detect.py --weights YOLOv5/models/yolov5n.onnx --dnn --source YOLOv5/data/bus.jpg --conf-thres 0.4 --device cpu --save-txt --save-conf --project YOLOv5/evidence --name baseline --exist-ok",
+  "unmodified_source": true,
+  "detect_py_sha256_before": "ba0175be184bd03632590b3d71b059f2e2df21569392bb9c5e18ff76292f9e60",
+  "returncode": 0,
+  "detect_py_sha256_after": "ba0175be184bd03632590b3d71b059f2e2df21569392bb9c5e18ff76292f9e60"
+}

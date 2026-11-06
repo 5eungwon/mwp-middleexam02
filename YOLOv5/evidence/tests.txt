@@ -1,0 +1,22 @@
+Executed at 2026-11-06T08:12:58.263698+00:00
+Python 3.9.6 / macOS-26.6.2-arm64-arm-64bit
+Command: .venv/bin/python -m unittest discover -s YOLOv5/tests -v
+
+/Users/gimseung-won/mwp-middle02/mwp-middleexam02/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+test_disappearance_then_reappearance_uploads_again (test_changedetection.TransitionTests) ... ok
+test_expired_token_is_refreshed_once (test_changedetection.TransitionTests) ... ok
+test_failed_upload_is_retried_when_presence_is_held (test_changedetection.TransitionTests) ... Upload pending event=c8bfabc6142945639cfb3e0dd266bc71 (ConnectionError)
+ok
+test_instances_do_not_share_previous_state (test_changedetection.TransitionTests) ... ok
+test_mismatched_presence_vector_rejected (test_changedetection.TransitionTests) ... ok
+test_new_presence_uploads_once_and_held_presence_is_suppressed (test_changedetection.TransitionTests) ... ok
+test_non_monitored_class_does_not_upload (test_changedetection.TransitionTests) ... ok
+test_restart_can_flush_persisted_event_without_a_new_transition (test_changedetection.TransitionTests) ... Upload pending event=6ee58b19e0d044e3a82d7fc42475056f (HTTPError)
+ok
+test_official_bus_image_detects_people_and_bus (test_inference.RealInferenceTests) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.199s
+
+OK

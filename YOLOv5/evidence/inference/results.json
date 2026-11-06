@@ -1,0 +1,66 @@
+{
+  "started_at": "2026-11-06T08:11:41.313663+00:00",
+  "engine": "OpenCV DNN / official YOLOv5n v7.0 ONNX",
+  "source": "YOLOv5/data/bus.jpg",
+  "weights_sha256": "04f0e55c26f58d17145b36045780fe1250d5bd2187543e11568e5141d05b3262",
+  "confidence_threshold": 0.4,
+  "iou_threshold": 0.45,
+  "monitored_classes": [
+    "person"
+  ],
+  "upload_enabled": false,
+  "pending_uploads": 0,
+  "frames": [
+    {
+      "frame": 1,
+      "inference_ms": 100.36,
+      "detections": [
+        {
+          "class_id": 0,
+          "name": "person",
+          "confidence": 0.822809,
+          "xyxy": [
+            219,
+            408,
+            349,
+            863
+          ]
+        },
+        {
+          "class_id": 0,
+          "name": "person",
+          "confidence": 0.815568,
+          "xyxy": [
+            52,
+            399,
+            207,
+            895
+          ]
+        },
+        {
+          "class_id": 0,
+          "name": "person",
+          "confidence": 0.675583,
+          "xyxy": [
+            681,
+            377,
+            810,
+            870
+          ]
+        },
+        {
+          "class_id": 5,
+          "name": "bus",
+          "confidence": 0.526095,
+          "xyxy": [
+            49,
+            237,
+            810,
+            772
+          ]
+        }
+      ],
+      "uploaded": []
+    }
+  ]
+}

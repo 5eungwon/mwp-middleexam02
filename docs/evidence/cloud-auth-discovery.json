@@ -1,0 +1,30 @@
+{
+  "status": "deployment_credentials_missing",
+  "target": "https://asdfgh0986.pythonanywhere.com",
+  "searched_directory": "/Users/gimseung-won/mwp-middle01",
+  "searched": [
+    "project files including hidden and ignored files",
+    "environment configuration filenames",
+    "PythonAnywhere API token variable references",
+    "virtual environment activation scripts",
+    "current process environment key names"
+  ],
+  "usable_api_token_found": false,
+  "local_deployment_environment_file_found": false,
+  "remote_configuration_paths_documented": [
+    "/home/asdfgh0986/.config/photoblog-v2.json",
+    "/home/asdfgh0986/.config/photoblog-v2-admin.json"
+  ],
+  "browser_cookies_accessed": false,
+  "remote_settings_modified": false,
+  "prepared_script": "scripts/deploy_pythonanywhere.py",
+  "local_script_checks": {
+    "python_syntax": "passed",
+    "remote_bootstrap_json_serialization": "passed",
+    "source_archive_excludes_secrets_database_media": "passed"
+  },
+  "still_required": [
+    "PythonAnywhere account API token supplied as a process environment variable",
+    "an existing idle Bash console ID opened in PythonAnywhere"
+  ]
+}
