@@ -1,0 +1,69 @@
+{
+  "captured_at_utc": "2026-11-06T08:39:11.904189+00:00",
+  "base_url": "https://asdfgh0986.pythonanywhere.com",
+  "result": "PASS",
+  "checks": [
+    {
+      "check": "health",
+      "status": 200,
+      "expected": 200
+    },
+    {
+      "check": "anonymous_rejected",
+      "status": 401,
+      "expected": 401
+    },
+    {
+      "check": "jwt_login",
+      "status": 200,
+      "expected": 200
+    },
+    {
+      "check": "multipart_upload",
+      "status": 201,
+      "expected": 201
+    },
+    {
+      "check": "lecture_json_array",
+      "status": 200,
+      "expected": 200
+    },
+    {
+      "check": "search",
+      "status": 200,
+      "expected": 200
+    },
+    {
+      "check": "unread_before",
+      "status": 200,
+      "expected": 200
+    },
+    {
+      "check": "acknowledge",
+      "status": 200,
+      "expected": 200
+    },
+    {
+      "check": "unread_after",
+      "status": 200,
+      "expected": 200
+    },
+    {
+      "check": "image_download",
+      "status": 200,
+      "expected": 200
+    }
+  ],
+  "post_id": 3,
+  "post": {
+    "id": 3,
+    "title": "통합 검증 · person 출현",
+    "text": "실제 HTTP multipart 업로드·조회·검색·확인 처리 검증. 사진은 YOLOv5 검출 결과입니다.",
+    "image": "https://asdfgh0986.pythonanywhere.com/media/detections/2026/11/06/4ddd48462fdb496fa387e96269916029.jpg",
+    "created_date": "2026-11-06T17:39:09.142559+09:00",
+    "published_date": "2026-11-06T17:39:09.142565+09:00",
+    "author": "guardian",
+    "acknowledged": false
+  },
+  "note": "실행 중인 서버에 실제 HTTP 요청. 인증 정보는 기록하지 않음."
+}

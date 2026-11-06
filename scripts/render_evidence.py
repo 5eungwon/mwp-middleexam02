@@ -12,6 +12,8 @@ sources = [
     ("실제 YOLO 추론·서버 업로드", EVIDENCE / "edge-integration.json"),
     ("실제 HTTP 통합 검증", EVIDENCE / "integration.json"),
     ("Android APK 빌드", EVIDENCE / "android-build.txt"),
+    ("PythonAnywhere 실제 배포·백업", EVIDENCE / "cloud-deployment.json"),
+    ("PythonAnywhere 실제 HTTPS 기능 검증", EVIDENCE / "cloud-integration.json"),
 ]
 for title, path in sources:
     if not path.exists():

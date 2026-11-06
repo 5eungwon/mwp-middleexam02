@@ -1,11 +1,14 @@
 {
-  "overall": "로컬 구현·검증 완료 · PythonAnywhere 배포 검증 진행",
-  "github": "확인 중",
+  "overall": "원본 양식 전 항목 구현·검증 및 캡처 완료 · 별도 GitHub 저장소 제출",
+  "github": "완료",
   "backend": "완료",
   "edge": "완료",
   "android": "완료",
   "filters": "완료",
   "acknowledge": "완료",
-  "cloud": "배포 검증 진행",
-  "test_summary": "Django 자동 테스트 14개, 엣지 자동 테스트 9개 통과. 실제 HTTP 연동 10개 검사 통과. Android assembleDebug/lintDebug 성공 및 Lint 0개. 실제 Pixel 7 앱에서 YOLO 사진·검색·미확인·확인 상태 서버 반영 확인."
+  "cloud": "완료",
+  "test_summary": "Django 자동 테스트 14개 및 엣지 자동 테스트 9개 통과. 실제 HTTP 검증은 로컬 10개·PythonAnywhere HTTPS 10개 검사 통과. Android assembleDebug/lintDebug 성공, Lint 0개. 실제 Pixel 7 앱에서 로컬 YOLO 사진·검색·미확인·확인 상태 서버 반영 및 클라우드 HTTPS 사진 조회를 확인.",
+  "github_url": "https://github.com/5eungwon/mwp-middleexam02",
+  "initial_pushed_commit": "527b8227f7cb81539eac88eededab7c60bbdbefe",
+  "cloud_android": "완료"
 }

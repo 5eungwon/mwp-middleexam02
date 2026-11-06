@@ -1,5 +1,5 @@
 {
-  "status": "deployment_credentials_missing",
+  "status": "resolved_by_user_supplied_credentials",
   "target": "https://asdfgh0986.pythonanywhere.com",
   "searched_directory": "/Users/gimseung-won/mwp-middle01",
   "searched": [
@@ -16,15 +16,19 @@
     "/home/asdfgh0986/.config/photoblog-v2-admin.json"
   ],
   "browser_cookies_accessed": false,
-  "remote_settings_modified": false,
+  "remote_settings_modified": true,
   "prepared_script": "scripts/deploy_pythonanywhere.py",
   "local_script_checks": {
     "python_syntax": "passed",
     "remote_bootstrap_json_serialization": "passed",
     "source_archive_excludes_secrets_database_media": "passed"
   },
-  "still_required": [
-    "PythonAnywhere account API token supplied as a process environment variable",
-    "an existing idle Bash console ID opened in PythonAnywhere"
-  ]
+  "still_required": [],
+  "resolution": {
+    "api_token_source": "provided_by_user_private_environment_file",
+    "deployment": "completed",
+    "evidence": "docs/evidence/cloud-deployment.json",
+    "remote_console_state": "inactive (API HTTP 412)",
+    "activation_method": "authenticated API file upload and one-time WSGI bootstrap; original app served during setup"
+  }
 }

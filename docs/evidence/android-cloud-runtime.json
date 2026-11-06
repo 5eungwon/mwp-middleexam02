@@ -1,0 +1,53 @@
+{
+  "captured_at_utc": "2026-11-06T08:40:35.683227+00:00",
+  "package": "kr.ac.homeguard.photoviewer",
+  "device": "sdk_gphone64_arm64",
+  "android_release": "15",
+  "sdk": "35",
+  "server_in_app": "https://asdfgh0986.pythonanywhere.com",
+  "transport": "HTTPS with platform certificate verification",
+  "post_id": 1,
+  "photo_source": "actual cloud YOLOv5 inference upload",
+  "image_url": "https://asdfgh0986.pythonanywhere.com/media/detections/2026/11/06/5f4b2d95f79a47189e8168d48d4b2f07.jpg",
+  "image_sha256": "ee12091f1a3f5578a64c712f09e0878861ef0e9691fc472358df8d7b29a6ce83",
+  "image_dimensions": [
+    320,
+    240
+  ],
+  "installed_apk_sha256": "840e1a48288f56f051c232477c50aaccfb49f8634ac70444aed9404a69ecedac",
+  "installed_apk_unchanged_from_build": true,
+  "read_state_before": false,
+  "read_state_after": false,
+  "feed": {
+    "screenshot": "android-cloud.png",
+    "image_bounds": [
+      105,
+      1183,
+      975,
+      1656
+    ],
+    "remote_image_pixel_mae": 1.7036,
+    "loaded_photo_verified": true
+  },
+  "detail": {
+    "screenshot": "android-cloud-detail.png",
+    "image_bounds": [
+      58,
+      773,
+      1022,
+      1496
+    ],
+    "remote_image_pixel_mae": 0.1815,
+    "loaded_photo_verified": true
+  },
+  "verified": [
+    "native_server_url_input",
+    "native_https_login",
+    "cloud_post_id",
+    "feed_with_network_loaded_cloud_yolo_photo",
+    "detail_with_same_cloud_event",
+    "installed_apk_unchanged",
+    "unread_state_preserved"
+  ],
+  "result": "PASS"
+}

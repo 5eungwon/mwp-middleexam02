@@ -42,6 +42,8 @@ FIGURES = {
  'cloud-feed.png': ('A09-1 · PythonAnywhere 목록·사진', '이번 과제의 Django 서버가 PythonAnywhere에서 실제로 제공하는 사진 목록입니다.'),
  'cloud-detail.png': ('A09-2 · PythonAnywhere 검출 사진 상세', 'PythonAnywhere에 실제 전송된 YOLO 검출 사진과 메타데이터입니다.'),
  'android-cloud.png': ('A09-3 · Android 클라우드 사진 동기화', '실제 Android 앱이 이번 Django 클라우드 서버의 사진을 HTTPS로 동기화한 화면입니다.'),
+ 'android-cloud-login.png': ('A09-4 · Android의 클라우드 서버 설정', '실제 Android 앱에 PythonAnywhere HTTPS 주소를 입력한 화면입니다. 비밀번호 입력 전 캡처입니다.'),
+ 'android-cloud-detail.png': ('A09-5 · Android 클라우드 YOLO 사진 상세', '실제 YOLO가 클라우드에 전송한 사진을 Android 앱에서 HTTPS로 조회한 화면입니다.'),
  'web-search.png': ('A10-1 · 편의 기능 1 · 서버 검색', '실제 서버에서 person을 검색한 결과입니다. 제목과 내용 검색을 지원합니다.'),
  'web-unread.png': ('A10-2 · 편의 기능 1 · 서버 미확인 필터', '확인 처리된 기록을 제외하고 미확인 기록만 조회하는 서버 화면입니다.'),
  'android-unread.png': ('A10-3 · 편의 기능 1 · Android 미확인 필터', 'Android가 API의 unread=1을 사용해 미확인 기록만 표시한 실제 화면입니다.'),
@@ -82,7 +84,7 @@ fill(7, (E/'edge-integration.json').exists(), ['web-feed.png','web-detail.png'],
 fill(8, (E/'android-runtime.json').exists(), ['android-feed.png','android-detail.png'], 'PC 브라우저의 모바일 크기 화면이 아닌 실제 네이티브 Android 에뮬레이터.')
 cloud_ok = STATE.get('cloud') == '완료'
 fill(9, cloud_ok, ['cloud-api.png'], '새 코드의 실제 배포 검증.' if cloud_ok else '배포용 API 토큰 미확인. 기존 01 사이트 접속만으로 이번 코드 동작을 완료 처리하지 않음.')
-fill(10, cloud_ok, ['cloud-feed.png','cloud-detail.png','android-cloud.png'], '실제 클라우드 목록·사진 증빙.' if cloud_ok else '새 Django 배포 후 실제 목록·사진 확인 필요. 기존 원격 사이트는 변경하지 않음.')
+fill(10, cloud_ok, ['cloud-feed.png','cloud-detail.png'], '실제 클라우드 목록·사진 증빙. Android HTTPS 연결 화면은 A09-3~5 확대본에 추가.' if cloud_ok else '새 Django 배포 후 실제 목록·사진 확인 필요. 기존 원격 사이트는 변경하지 않음.')
 # Keep the template's original requirement row and use its blank rows for the
 # explicitly requested separate server/client convenience implementations.
 feature_rows = [
@@ -103,6 +105,7 @@ doc.add_heading('구현·검증 개요',level=1)
 doc.add_paragraph('원본 공통평가 02 Word 양식의 1~10 요구사항을 모두 대조해 원본 표의 완료 여부, 판정과 관련증빙을 작성했습니다. 편의 기능은 2개이며 서버/클라이언트 구현을 각각 별도 행에 기록했습니다. 이미지는 원본 바이트를 문서에 포함했고 자동 압축을 껐습니다.')
 doc.add_paragraph('작성일: '+datetime.now(ZoneInfo('Asia/Seoul')).strftime('%Y-%m-%d %H:%M KST'))
 doc.add_paragraph('현재 상태: '+STATE.get('overall','로컬 구현 검증 완료 · 클라우드 배포 인증정보 확인 필요'))
+doc.add_paragraph('클라우드 서비스: https://asdfgh0986.pythonanywhere.com / 강의 API: https://asdfgh0986.pythonanywhere.com/api_root/Post/ (로그인 필요)')
 doc.add_paragraph(STATE.get('test_summary','자동 테스트와 실제 연동 결과는 원본 로그 참조.'))
 doc.add_paragraph('Django: Python3.12.14 / Django5.2.19 / DRF3.18.3 / PyJWT2.15.1. 엣지: Python3.9.6 / OpenCV4.11.0.86 / NumPy1.26.4. 기본 원본 detect.py는 별도 Python3.12 가상환경에서 공식 v7.0 소스를 수정 없이 실행했습니다. Android: Java, compileSdk36, 실제 Pixel7 Android15(API35) 에뮬레이터.')
 doc.add_paragraph('강의 호환: POST /api-token-auth/ → JWT 발급; Authorization: JWT <token>; POST /api_root/Post/ multipart 사진·제목·설명 전송. API GET은 JSON Array입니다. 클래스 존재 여부가 0→1로 변할 때 새 이벤트를 전송하고 동일 클래스가 계속 보이는 동안 반복 등록하지 않습니다. 실패 이벤트는 파일 outbox에 남겨 재시도합니다.')
@@ -122,7 +125,7 @@ doc.add_page_break()
 doc.add_heading('재현 방법 및 참고',level=1)
 doc.add_paragraph('설치·실행·테스트는 루트 및 각 프로젝트의 README.md를 참조합니다. 원본 소스 기본 실행 명령은 YOLOv5/evidence/baseline-command.txt, 해시 검증은 baseline-run.json, 수정 검출기 결과는 docs/evidence/edge-integration.json, Android 실행 기록은 android-runtime.json에 있습니다.')
 doc.add_paragraph('증빙 재생성: scripts/capture_web.py, scripts/capture_android.py, scripts/verify_integration.py, scripts/build_report.py. 계정은 외부 비밀 파일로 전달하며 비밀번호/JWT를 Git이나 보고서에 넣지 않습니다.')
-doc.add_paragraph('PythonAnywhere 배포·백업·복구는 docs/PYTHONANYWHERE.md를 참조합니다. 원격 검증이 완료되지 않은 경우 원본 표의 8·9 항목을 미완료로 유지합니다.')
+doc.add_paragraph('PythonAnywhere 배포·백업·복구는 docs/PYTHONANYWHERE.md를 참조합니다. 실제 배포 결과는 cloud-deployment.json, YOLO 전송은 cloud-edge-integration.json, 실제 HTTPS 기능 검증은 cloud-integration.json, 모바일 클라우드 검증은 android-cloud-runtime.json에 있습니다.')
 doc.add_paragraph('기준 강의: ch08. Django와 YOLO를 이용한 침입자 감시 시스템_v1.8.pdf 3·6·8–13쪽. 원본 모델·이미지 출처와 라이선스는 YOLOv5/README.md 및 ASSETS.md, 원본 소스는 upstream-source.json에 있습니다.')
 doc.add_paragraph('공식 배포 문서: https://help.pythonanywhere.com/pages/DeployExistingDjangoProject/')
 doc.save(OUTPUT)

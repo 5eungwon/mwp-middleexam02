@@ -1,0 +1,333 @@
+{
+  "validated_at": "2026-11-06T17:42:09.802843+09:00",
+  "report_filename": "모바일웹서비스 프로젝트_공통평가 02_수행 결과 보고서.docx",
+  "report_sha256": "1220eac550b0e85c161e6fc61214911c27ce7fbdab8f7dcf2e852285cfee8e92",
+  "report_size_bytes": 11898241,
+  "original_template": "docs/templates/report-template.docx",
+  "original_template_sha256": "f65f8108bf2cf9d0be60e81a1c0f29f3e1598cdcf58ec9230503dab4bc46043a",
+  "table_count": 1,
+  "table_rows": 16,
+  "table_columns": 7,
+  "original_requirements_1_through_9_preserved": true,
+  "requirements": [
+    {
+      "id": "1",
+      "category": "제출문",
+      "requirement": "폴더 구조",
+      "status": "완료",
+      "judgment": "○"
+    },
+    {
+      "id": "2",
+      "category": "제출문",
+      "requirement": "Github 레파지토리 push",
+      "status": "완료",
+      "judgment": "○"
+    },
+    {
+      "id": "3",
+      "category": "강의 자료",
+      "requirement": "YOLOv5 설치 및 실행",
+      "status": "완료",
+      "judgment": "○"
+    },
+    {
+      "id": "4",
+      "category": "강의 자료",
+      "requirement": "검출기 코드 수정",
+      "status": "완료",
+      "judgment": "○"
+    },
+    {
+      "id": "5",
+      "category": "강의 자료",
+      "requirement": "블로그 등록 결과",
+      "status": "완료",
+      "judgment": "○"
+    },
+    {
+      "id": "6",
+      "category": "강의 자료",
+      "requirement": "블로그 등록 결과",
+      "status": "완료",
+      "judgment": "○"
+    },
+    {
+      "id": "7",
+      "category": "제출문",
+      "requirement": "모바일 화면 확인",
+      "status": "완료",
+      "judgment": "○"
+    },
+    {
+      "id": "8",
+      "category": "제출문",
+      "requirement": "Pythonanywhere 클라우드상 동작",
+      "status": "완료",
+      "judgment": "○"
+    },
+    {
+      "id": "9",
+      "category": "제출문",
+      "requirement": "Pythonanywhere 클라우드상 동작",
+      "status": "완료",
+      "judgment": "○"
+    },
+    {
+      "id": "10-1",
+      "category": "Server",
+      "requirement": "검색·미확인 필터",
+      "status": "완료",
+      "judgment": "○"
+    },
+    {
+      "id": "10-1",
+      "category": "Client",
+      "requirement": "검색·미확인 필터",
+      "status": "완료",
+      "judgment": "○"
+    },
+    {
+      "id": "10-2",
+      "category": "Server",
+      "requirement": "확인 완료 처리",
+      "status": "완료",
+      "judgment": "○"
+    },
+    {
+      "id": "10-2",
+      "category": "Client",
+      "requirement": "확인 완료 처리",
+      "status": "완료",
+      "judgment": "○"
+    }
+  ],
+  "all_requirement_statuses_complete": true,
+  "convenience_feature_ids": [
+    "10-1",
+    "10-2"
+  ],
+  "image_placements": 42,
+  "embedded_media_count": 24,
+  "unique_embedded_media_sha256_count": 24,
+  "referenced_source_image_count": 24,
+  "all_referenced_images_byte_equal": true,
+  "image_source_mapping": [
+    {
+      "source": "docs/evidence/android-acknowledged.png",
+      "source_sha256": "d595e5a632183a79abf4a4dd8a8438b1235a75d45ea36b1a483af0c706b6ae02",
+      "embedded_media": [
+        "word/media/image18.png"
+      ],
+      "byte_equal": true
+    },
+    {
+      "source": "docs/evidence/android-cloud-detail.png",
+      "source_sha256": "dfe071910bb36129e20562ab6a05f67f18701b1629d581625b1db474143f9c7d",
+      "embedded_media": [
+        "word/media/image22.png"
+      ],
+      "byte_equal": true
+    },
+    {
+      "source": "docs/evidence/android-cloud-login.png",
+      "source_sha256": "6576887d16ac3023ccc135b03f3880f3709fb15a474463bad8593e394ee1d679",
+      "embedded_media": [
+        "word/media/image21.png"
+      ],
+      "byte_equal": true
+    },
+    {
+      "source": "docs/evidence/android-cloud.png",
+      "source_sha256": "b3d1a21c0bd1f155c1c3f353937bb2779dc068eab405f26db33b9af27ecf9df6",
+      "embedded_media": [
+        "word/media/image20.png"
+      ],
+      "byte_equal": true
+    },
+    {
+      "source": "docs/evidence/android-detail.png",
+      "source_sha256": "d48fcc145a2537fe85b3bbd847e69d6b7185e7796277f1fe4d6366b6b364fed8",
+      "embedded_media": [
+        "word/media/image10.png"
+      ],
+      "byte_equal": true
+    },
+    {
+      "source": "docs/evidence/android-feed.png",
+      "source_sha256": "887a797a86dbc63651280bd2f173fd15cd7b42b6cf80d4edf55c30d57fcf96de",
+      "embedded_media": [
+        "word/media/image9.png"
+      ],
+      "byte_equal": true
+    },
+    {
+      "source": "docs/evidence/android-login.png",
+      "source_sha256": "0c85835640a37621e2aba12bc7d3240a67bef3b7c455140aa2afbd890ffed177",
+      "embedded_media": [
+        "word/media/image19.png"
+      ],
+      "byte_equal": true
+    },
+    {
+      "source": "docs/evidence/android-search.png",
+      "source_sha256": "2ee953483c206323d8110ff86ab65f633409631ebdb2401fe37b0708c0e7be55",
+      "embedded_media": [
+        "word/media/image17.png"
+      ],
+      "byte_equal": true
+    },
+    {
+      "source": "docs/evidence/android-unread.png",
+      "source_sha256": "9bc44b927dfacd53deaf83bd93198c83e9b840f8f51263ecd1b52584269017be",
+      "embedded_media": [
+        "word/media/image16.png"
+      ],
+      "byte_equal": true
+    },
+    {
+      "source": "docs/evidence/baseline-screen.png",
+      "source_sha256": "ad135a74c8b46e6fd14cbb6af157b30ff61cb12e0c754e3552376a720c54e2b2",
+      "embedded_media": [
+        "word/media/image3.png"
+      ],
+      "byte_equal": true
+    },
+    {
+      "source": "docs/evidence/cloud-api.png",
+      "source_sha256": "2a8142b9c69f3d148423bed4acf2d2d0093735337b7e45b73fd1413ded6333fc",
+      "embedded_media": [
+        "word/media/image11.png"
+      ],
+      "byte_equal": true
+    },
+    {
+      "source": "docs/evidence/cloud-detail.png",
+      "source_sha256": "c1ad0148546f41306a4358b31597fb1581c32166ec82e131dca072ef4978b811",
+      "embedded_media": [
+        "word/media/image13.png"
+      ],
+      "byte_equal": true
+    },
+    {
+      "source": "docs/evidence/cloud-feed.png",
+      "source_sha256": "c8a0a907463a3d59c5630c565fa6fdbcd72c39b72cb25390fe05c702b69907dd",
+      "embedded_media": [
+        "word/media/image12.png"
+      ],
+      "byte_equal": true
+    },
+    {
+      "source": "docs/evidence/repository.png",
+      "source_sha256": "1524a6708ee4f858bee1f58bf59464b8c15993cd32900c1c2b31d6d253d0bd0a",
+      "embedded_media": [
+        "word/media/image2.png"
+      ],
+      "byte_equal": true
+    },
+    {
+      "source": "docs/evidence/tests.png",
+      "source_sha256": "e5495c913d0a5ac1cf8e276bc4ba915d8419ac7dbaa11f32d95b640d292e2f66",
+      "embedded_media": [
+        "word/media/image23.png"
+      ],
+      "byte_equal": true
+    },
+    {
+      "source": "docs/evidence/vscode-changedetection.png",
+      "source_sha256": "1e770bb47e9ab798ba2eadd4fb82770ea65e816500a1138959e3a3b3db530975",
+      "embedded_media": [
+        "word/media/image4.png"
+      ],
+      "byte_equal": true
+    },
+    {
+      "source": "docs/evidence/vscode-detect.png",
+      "source_sha256": "7a1af20db94098ea7267c6c53626f25b1fa09d262710085e155ef382d7ffc1b8",
+      "embedded_media": [
+        "word/media/image5.png"
+      ],
+      "byte_equal": true
+    },
+    {
+      "source": "docs/evidence/web-acknowledged.png",
+      "source_sha256": "fa0a37473b53b82557d10fc1025313bca4297daaf4f0e5cc1d1380cc5dff45ea",
+      "embedded_media": [
+        "word/media/image8.png"
+      ],
+      "byte_equal": true
+    },
+    {
+      "source": "docs/evidence/web-api.png",
+      "source_sha256": "e752441958d97b04e98db0b7f739cc4fce7f72ca97047237e2ea22cd2c72ded0",
+      "embedded_media": [
+        "word/media/image6.png"
+      ],
+      "byte_equal": true
+    },
+    {
+      "source": "docs/evidence/web-detail.png",
+      "source_sha256": "fa0a37473b53b82557d10fc1025313bca4297daaf4f0e5cc1d1380cc5dff45ea",
+      "embedded_media": [
+        "word/media/image8.png"
+      ],
+      "byte_equal": true
+    },
+    {
+      "source": "docs/evidence/web-feed.png",
+      "source_sha256": "d70b7d6f23e7c698cd3eaf0329e93dca30cf96537c84c755c987be88158ebcb9",
+      "embedded_media": [
+        "word/media/image7.png"
+      ],
+      "byte_equal": true
+    },
+    {
+      "source": "docs/evidence/web-search.png",
+      "source_sha256": "5aefe88779c2981d493af9e5d5a09490f2689bb467b12e4260a05334dbe06099",
+      "embedded_media": [
+        "word/media/image14.png"
+      ],
+      "byte_equal": true
+    },
+    {
+      "source": "docs/evidence/web-unread.png",
+      "source_sha256": "3cddb0207dc07daac5b1eef4f64e7b98073dbcceac5d06f4c262ef8e091cf161",
+      "embedded_media": [
+        "word/media/image15.png"
+      ],
+      "byte_equal": true
+    },
+    {
+      "source": "docs/evidence/yolo-inference.jpg",
+      "source_sha256": "644b39d022513533a464627b37ead1e9745f910acada2d98f5e4f5f4328bb2a0",
+      "embedded_media": [
+        "word/media/image24.jpg"
+      ],
+      "byte_equal": true
+    }
+  ],
+  "external_image_references": [],
+  "image_crop_definition_count": 0,
+  "max_image_aspect_ratio_relative_error": 3.301196189742228e-07,
+  "native_word_pdf_export": "Not performed for final report; earlier draft export timed out with AppleEvent -1712. Native Word pagination is not certified.",
+  "quicklook": {
+    "status": "passed",
+    "renderer": "macOS QuickLook public.html preview rendered in headless Chrome",
+    "metrics": {
+      "preview_left": 0,
+      "preview_right": 593,
+      "preview_width": 593,
+      "image_count": 42,
+      "loaded_image_count": 42,
+      "image_horizontal_overflow_count": 0,
+      "table_left": 70,
+      "table_right": 530,
+      "table_width": 460,
+      "table_horizontal_overflow": false
+    },
+    "first_viewport_capture": "docs/evidence/report-preview.png",
+    "first_viewport_capture_sha256": "4b3586238405b57c93eb1787ef547a64e20da50e5543ffc8713a33b5eb36874a",
+    "limits": "QuickLook HTML is continuous and does not certify Microsoft Word native page breaks or paragraph orphans."
+  },
+  "overall_objective_checks_passed": true
+}

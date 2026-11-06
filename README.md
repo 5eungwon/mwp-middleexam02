@@ -27,9 +27,12 @@ ROOT/
 | 실제 HTTP 통합 검증 | 10개 검사 통과 | [HTTP 결과](docs/evidence/integration.json) |
 | Android 빌드·Lint | assembleDebug/lintDebug 성공, Lint 문제 0개 | [빌드 기록](PhotoViewer/validation/build-summary.json) |
 | 실제 Android 실행 | 로그인·YOLO 사진·검색·미확인·확인 처리·서버 반영 | [실행 기록](docs/evidence/android-runtime.json) |
-| PythonAnywhere | 최신 배포·검증 결과는 배포 문서와 Word에 기록 | [배포·복구](docs/PYTHONANYWHERE.md) |
+| PythonAnywhere | 실제 배포·YOLO 전송·HTTPS 기능 검사 10개 통과 | [배포 결과](docs/evidence/cloud-deployment.json), [클라우드 HTTP](docs/evidence/cloud-integration.json) |
+| Android 클라우드 | 동일 APK에서 HTTPS 로그인·원격 YOLO 사진 확인 | [실행 기록](docs/evidence/android-cloud-runtime.json) |
 
 캡처 원본은 [docs/evidence](docs/evidence)에 있습니다. Word 원본 표의 관련증빙 칸에 이미지를 내장하고 뒤쪽에 확대본을 추가합니다. 실제 VS Code 화면, 수정 전 공식 검출기, 수정 검출기의 결과를 구분해 보관합니다.
+
+**운영 주소:** https://asdfgh0986.pythonanywhere.com · 기존 프로젝트와 DB는 보존했으며 [배포·백업·복구](docs/PYTHONANYWHERE.md)에 실제 경로를 기록했습니다. 로그인 정보는 공개 저장소에 포함하지 않습니다.
 
 ## 서버 실행
 

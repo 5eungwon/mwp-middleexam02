@@ -1,0 +1,21 @@
+{
+  "captured_at_utc": "2026-11-06T08:39:51.066515+00:00",
+  "post_id": 1,
+  "captures": [
+    {
+      "file": "cloud-feed.png",
+      "url": "https://asdfgh0986.pythonanywhere.com/",
+      "status": 200
+    },
+    {
+      "file": "cloud-detail.png",
+      "url": "https://asdfgh0986.pythonanywhere.com/posts/1/",
+      "status": 200
+    },
+    {
+      "file": "cloud-api.png",
+      "url": "https://asdfgh0986.pythonanywhere.com/api_root/Post/",
+      "status": 200
+    }
+  ]
+}

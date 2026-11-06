@@ -1,0 +1,13 @@
+{
+  "local_python_syntax": "passed",
+  "remote_bootstrap_python_syntax": "passed",
+  "source_archive_excludes_secrets_database_media": "passed",
+  "archive_file_count": 29,
+  "live_deployment": "passed",
+  "live_backup_database_integrity": "ok",
+  "limitations": [
+    "HSTS includeSubDomains and preload remain unset pending domain policy (Django W005 and W021).",
+    "Private media is currently retrievable by opaque UUID URL; submitted evidence uses a public sample image.",
+    "A browserless inactive console cannot receive commands; the explicitly selected WSGI bootstrap was used."
+  ]
+}

@@ -273,4 +273,103 @@ OK
 }
 
 No issues found.
-</pre></section></html>
+</pre></section>
+<section><h2>PythonAnywhere 실제 배포·백업</h2><p>docs/evidence/cloud-deployment.json</p><pre>{
+  &quot;server&quot;: &quot;https://asdfgh0986.pythonanywhere.com&quot;,
+  &quot;deployed_at&quot;: &quot;2026-11-06T17:38:14.729261+09:00&quot;,
+  &quot;source_directory&quot;: &quot;/home/asdfgh0986/home-guardian-assessment02/releases/20261106-083539/PhotoBlogServer&quot;,
+  &quot;virtualenv&quot;: &quot;/home/asdfgh0986/.virtualenvs/home-guardian-assessment02&quot;,
+  &quot;data_directory&quot;: &quot;/home/asdfgh0986/home-guardian-assessment02/data&quot;,
+  &quot;backup&quot;: &quot;/home/asdfgh0986/photoblog-backups/before-assessment02-20261106-083539&quot;,
+  &quot;database_backup_integrity&quot;: &quot;ok&quot;,
+  &quot;original_files_preserved&quot;: true,
+  &quot;checks&quot;: [
+    {
+      &quot;check&quot;: &quot;HTTPS health&quot;,
+      &quot;status&quot;: 200,
+      &quot;result&quot;: {
+        &quot;status&quot;: &quot;ok&quot;,
+        &quot;service&quot;: &quot;PhotoBlogServer&quot;
+      }
+    },
+    {
+      &quot;check&quot;: &quot;anonymous API rejected&quot;,
+      &quot;status&quot;: 401
+    },
+    {
+      &quot;check&quot;: &quot;JWT login&quot;,
+      &quot;status&quot;: 200,
+      &quot;token&quot;: &quot;[redacted]&quot;
+    }
+  ],
+  &quot;api_documentation&quot;: &quot;https://help.pythonanywhere.com/pages/API/&quot;
+}</pre></section>
+<section><h2>PythonAnywhere 실제 HTTPS 기능 검증</h2><p>docs/evidence/cloud-integration.json</p><pre>{
+  &quot;captured_at_utc&quot;: &quot;2026-11-06T08:39:11.904189+00:00&quot;,
+  &quot;base_url&quot;: &quot;https://asdfgh0986.pythonanywhere.com&quot;,
+  &quot;result&quot;: &quot;PASS&quot;,
+  &quot;checks&quot;: [
+    {
+      &quot;check&quot;: &quot;health&quot;,
+      &quot;status&quot;: 200,
+      &quot;expected&quot;: 200
+    },
+    {
+      &quot;check&quot;: &quot;anonymous_rejected&quot;,
+      &quot;status&quot;: 401,
+      &quot;expected&quot;: 401
+    },
+    {
+      &quot;check&quot;: &quot;jwt_login&quot;,
+      &quot;status&quot;: 200,
+      &quot;expected&quot;: 200
+    },
+    {
+      &quot;check&quot;: &quot;multipart_upload&quot;,
+      &quot;status&quot;: 201,
+      &quot;expected&quot;: 201
+    },
+    {
+      &quot;check&quot;: &quot;lecture_json_array&quot;,
+      &quot;status&quot;: 200,
+      &quot;expected&quot;: 200
+    },
+    {
+      &quot;check&quot;: &quot;search&quot;,
+      &quot;status&quot;: 200,
+      &quot;expected&quot;: 200
+    },
+    {
+      &quot;check&quot;: &quot;unread_before&quot;,
+      &quot;status&quot;: 200,
+      &quot;expected&quot;: 200
+    },
+    {
+      &quot;check&quot;: &quot;acknowledge&quot;,
+      &quot;status&quot;: 200,
+      &quot;expected&quot;: 200
+    },
+    {
+      &quot;check&quot;: &quot;unread_after&quot;,
+      &quot;status&quot;: 200,
+      &quot;expected&quot;: 200
+    },
+    {
+      &quot;check&quot;: &quot;image_download&quot;,
+      &quot;status&quot;: 200,
+      &quot;expected&quot;: 200
+    }
+  ],
+  &quot;post_id&quot;: 3,
+  &quot;post&quot;: {
+    &quot;id&quot;: 3,
+    &quot;title&quot;: &quot;통합 검증 · person 출현&quot;,
+    &quot;text&quot;: &quot;실제 HTTP multipart 업로드·조회·검색·확인 처리 검증. 사진은 YOLOv5 검출 결과입니다.&quot;,
+    &quot;image&quot;: &quot;https://asdfgh0986.pythonanywhere.com/media/detections/2026/11/06/4ddd48462fdb496fa387e96269916029.jpg&quot;,
+    &quot;created_date&quot;: &quot;2026-11-06T17:39:09.142559+09:00&quot;,
+    &quot;published_date&quot;: &quot;2026-11-06T17:39:09.142565+09:00&quot;,
+    &quot;author&quot;: &quot;guardian&quot;,
+    &quot;acknowledged&quot;: false
+  },
+  &quot;note&quot;: &quot;실행 중인 서버에 실제 HTTP 요청. 인증 정보는 기록하지 않음.&quot;
+}</pre></section></html>
