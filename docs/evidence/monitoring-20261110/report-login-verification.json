@@ -1,0 +1,18 @@
+{
+  "status": "ready",
+  "username": "reviewer02",
+  "created": true,
+  "is_staff": false,
+  "is_superuser": false,
+  "owned_public_sample_posts": 2,
+  "jwt_login_status": 200,
+  "owned_records_api_status": 200,
+  "verification_time_utc": "2026-11-10T14:17:41.096042+00:00",
+  "actual_browser_login": "PASS",
+  "settings_web_status": 200,
+  "sample_image_http_statuses": [
+    200,
+    200
+  ],
+  "web_and_android_share_jwt_login": true
+}

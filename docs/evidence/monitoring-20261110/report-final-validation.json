@@ -1,8 +1,8 @@
 {
   "result": "PASS",
-  "verified_at": "2026-11-10T23:07:54.086411+09:00",
+  "verified_at": "2026-11-10T23:23:57.727129+09:00",
   "report": "모바일웹서비스 프로젝트_공통평가 02_수행 결과 보고서.docx",
-  "sha256": "c72330919bcfe0f86ff551ec538c8e0bcae2fb42200474ce75e76af8c0600dfc",
+  "sha256": "8072fec29571f7035a6d3a2943b02f702e144c27f034d37e6cd4916f995d3467",
   "page_count": 34,
   "editing_method": "Microsoft Word native AppleScript API on existing user report copy",
   "render_method": "Microsoft Word PDF export then macOS PDFKit page PNGs",
@@ -49,7 +49,13 @@
       "note": "Word native JPEG clipboard import"
     }
   ],
-  "pdf_sha256": "0fe4226348f4b369d00f3af793ce0ed3ae74179203b9f8f82070bf6b2ddbbc18",
+  "pdf_sha256": "d719601a0992bdc0af0feaf54c5d5319a1b1c3d46ab4ed140953efa3e70914fc",
   "qa_artifacts": "Private temporary QA files; final deliverable is root DOCX",
-  "original_user_copy_backed_up": true
+  "original_user_copy_backed_up": true,
+  "login_information_on_first_page": true,
+  "published_login_username": "reviewer02",
+  "published_login_role": "ordinary assessment user",
+  "login_verification": "report-login-verification.json",
+  "latest_user_edits_preserved": true,
+  "all_original_table_cells_and_embedded_images_preserved_for_login_update": true
 }

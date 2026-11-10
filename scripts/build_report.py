@@ -16,6 +16,7 @@ E = ROOT / 'docs/evidence'
 parser = argparse.ArgumentParser()
 parser.add_argument('--output', type=Path)
 parser.add_argument('--feature-update', action='store_true', help='Use the verified ROI / remote monitoring feature status')
+parser.add_argument('--login-credentials', type=Path, help='JSON credentials for the intentionally published assessment account')
 args = parser.parse_args()
 OUTPUT = args.output or ROOT / '모바일웹서비스 프로젝트_공통평가 02_수행 결과 보고서.docx'
 if args.output is None and list(ROOT.glob('~$*02*보고서.docx')):
@@ -32,6 +33,20 @@ for section in doc.sections:
 for p in doc.paragraphs:
     if p.text.strip() == '학번 :': p.text = '학번 : 2021105579'
     if p.text.strip() == '이름 :': p.text = '이름 : 김승원'
+if args.login_credentials:
+    login = json.loads(args.login_credentials.read_text())
+    anchor = next(p for p in doc.paragraphs if p.text.strip() == '이름 : 김승원')
+    for value in [
+        '서비스 접속 및 평가용 로그인',
+        '서버 주소  https://asdfgh0986.pythonanywhere.com',
+        f"아이디  {login['username']}    비밀번호  {login['password']}",
+        '웹과 Android 앱에서 공통으로 사용하는 평가용 계정입니다.',
+    ]:
+        element = OxmlElement('w:p')
+        anchor._p.addnext(element)
+        from docx.text.paragraph import Paragraph
+        anchor = Paragraph(element, anchor._parent)
+        anchor.add_run(value)
 setting = OxmlElement('w:doNotAutoCompressPictures')
 doc.settings.element.append(setting)
 normal = doc.styles['Normal']
@@ -168,7 +183,7 @@ for filename,(title,caption) in FIGURES.items():
 doc.add_page_break()
 doc.add_heading('재현 방법 및 참고',level=1)
 doc.add_paragraph('설치·실행·테스트는 루트 및 각 프로젝트의 README.md를 참조합니다. 원본 소스 기본 실행 명령은 YOLOv5/evidence/baseline-command.txt, 해시 검증은 baseline-run.json, 수정 검출기 결과는 docs/evidence/edge-integration.json, Android 실행 기록은 android-runtime.json에 있습니다.')
-doc.add_paragraph('증빙 재생성: scripts/capture_web.py, scripts/capture_android.py, scripts/verify_integration.py, scripts/build_report.py. 계정은 외부 비밀 파일로 전달하며 비밀번호/JWT를 Git이나 보고서에 넣지 않습니다.')
+doc.add_paragraph('증빙 재생성: scripts/capture_web.py, scripts/capture_android.py, scripts/verify_integration.py, scripts/build_report.py. 검증 도구의 계정 정보는 실행 시 파일로 전달합니다. 평가용 로그인 정보는 --login-credentials로 첫 페이지에 추가할 수 있습니다.')
 doc.add_paragraph('PythonAnywhere 배포·백업·복구는 docs/PYTHONANYWHERE.md를 참조합니다. 실제 배포 결과는 cloud-deployment.json, YOLO 전송은 cloud-edge-integration.json, 실제 HTTPS 기능 검증은 cloud-integration.json, 모바일 클라우드 검증은 android-cloud-runtime.json에 있습니다.')
 doc.add_paragraph('기준 강의: ch08. Django와 YOLO를 이용한 침입자 감시 시스템_v1.8.pdf 3·6·8–13쪽. 원본 모델·이미지 출처와 라이선스는 YOLOv5/README.md 및 download_assets.py, 원본 소스는 upstream-source.json에 있습니다.')
 doc.add_paragraph('공식 배포 문서: https://help.pythonanywhere.com/pages/DeployExistingDjangoProject/')

@@ -37,3 +37,5 @@ Django 28개, 엣지 16개 테스트 통과. Android 빌드·Lint 성공(오류 
 사용자가 승인한 대체 방식에 따라 Microsoft Word 네이티브 API로 편집하고 PDF를 출력했습니다. PDFKit으로 34쪽을 PNG로 변환해 전체 페이지를 육안 검토했습니다. [최종 보고서 검증 기록](evidence/monitoring-20261110/report-final-validation.json). `build_report.py --feature-update --output <별도파일.docx>`는 원본 양식에서 재생성하는 도구이며, 루트 최종본의 사용자 편집 내용을 보존하려면 별도 파일로 생성해야 합니다.
 
 서버의 이전 푸시 테이블·모듈은 기존 DB 호환을 위해 남겼지만 신규 사진의 자동 푸시 작업 생성은 중단했습니다. 현재 앱과 평가 기능에서 푸시 발송·수신을 제공하지 않습니다.
+
+첫 페이지에 배포 서버 주소와 평가용 일반 계정의 로그인 아이디·비밀번호를 추가했습니다. 이 계정으로 실제 웹 로그인·감시 설정 화면 접근·공개 예제 사진 두 건 조회를 확인했습니다. 검증 기록은 [report-login-verification.json](evidence/monitoring-20261110/report-login-verification.json)에 있습니다.
