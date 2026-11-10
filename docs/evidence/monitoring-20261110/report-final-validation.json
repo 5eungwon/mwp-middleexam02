@@ -1,0 +1,55 @@
+{
+  "result": "PASS",
+  "verified_at": "2026-11-10T23:07:54.086411+09:00",
+  "report": "모바일웹서비스 프로젝트_공통평가 02_수행 결과 보고서.docx",
+  "sha256": "c72330919bcfe0f86ff551ec538c8e0bcae2fb42200474ce75e76af8c0600dfc",
+  "page_count": 34,
+  "editing_method": "Microsoft Word native AppleScript API on existing user report copy",
+  "render_method": "Microsoft Word PDF export then macOS PDFKit page PNGs",
+  "runtime_exception": "User explicitly approved native Word editing and PDF preview because managed artifact runtime unavailable",
+  "all_pages_visually_reviewed": true,
+  "original_requirement_rows_preserved": true,
+  "unrelated_evidence_captions_preserved": true,
+  "two_convenience_features": [
+    "감시 영역 설정",
+    "원격 감시 ON/OFF"
+  ],
+  "all_four_feature_rows_completed": true,
+  "old_assessment01_header_removed": true,
+  "embedded_image_parts": 27,
+  "external_image_relationships": [],
+  "new_png_source_pixels_preserved": [
+    "control-android-off.png",
+    "control-web-off.png",
+    "roi-web.png",
+    "tests.png",
+    "roi-android.png",
+    "control-android-on.png"
+  ],
+  "native_jpeg_import_check": [
+    {
+      "source": "control-yolo-off.jpg",
+      "embedded": "word/media/image25.png",
+      "same_resolution": true,
+      "mean_pixel_difference": 0.291,
+      "note": "Word native JPEG clipboard import"
+    },
+    {
+      "source": "roi-inside.jpg",
+      "embedded": "word/media/image23.png",
+      "same_resolution": true,
+      "mean_pixel_difference": 0.375,
+      "note": "Word native JPEG clipboard import"
+    },
+    {
+      "source": "roi-outside.jpg",
+      "embedded": "word/media/image22.png",
+      "same_resolution": true,
+      "mean_pixel_difference": 0.376,
+      "note": "Word native JPEG clipboard import"
+    }
+  ],
+  "pdf_sha256": "0fe4226348f4b369d00f3af793ce0ed3ae74179203b9f8f82070bf6b2ddbbc18",
+  "qa_artifacts": "Private temporary QA files; final deliverable is root DOCX",
+  "original_user_copy_backed_up": true
+}

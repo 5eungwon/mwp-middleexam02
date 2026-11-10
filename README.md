@@ -34,7 +34,7 @@ ROOT/
 
 캡처 원본은 [docs/evidence](docs/evidence)에 있습니다. Word 원본 표의 관련증빙 칸에 이미지를 내장하고 뒤쪽에 확대본을 추가합니다. 실제 VS Code 화면, 수정 전 공식 검출기, 수정 검출기의 결과를 구분해 보관합니다.
 
-루트 Word는 사용자가 수정한 제출본을 보존했습니다. 새 기능의 상태·캡처는 [기능 문서](docs/FEATURES.md)와 `docs/evidence/monitoring-20261110/`에 기록했습니다. 보고서 갱신 도구의 `--feature-update` 모드는 영역과 원격 제어 두 기능을 반영합니다.
+루트 Word 보고서도 **최종 수정 완료**했습니다. 사용자 수정본을 기반으로 새 편의 기능 평가 행과 웹·Android·YOLO 캡처, 최신 테스트 결과를 반영했습니다. Word에서 PDF를 출력한 뒤 **34쪽 전체**를 검토했습니다. [최종 보고서 검증 기록](docs/evidence/monitoring-20261110/report-final-validation.json).
 
 **운영 주소:** https://asdfgh0986.pythonanywhere.com · 기존 프로젝트와 DB는 보존했으며 [배포·백업·복구](docs/PYTHONANYWHERE.md)에 실제 경로를 기록했습니다. 로그인 정보는 공개 저장소에 포함하지 않습니다.
 
@@ -108,7 +108,7 @@ APK: `app/build/outputs/apk/debug/app-debug.apk`. 에뮬레이터의 서버는 `
 
 ```sh
 .venv/bin/python scripts/render_evidence.py
-.venv/bin/python scripts/build_report.py
+.venv/bin/python scripts/build_report.py --feature-update --output /private/tmp/report-regenerated.docx
 ```
 
-최신 편의 기능 상태는 `docs/evidence/monitoring-20261110/status.json`을 참조하세요. 기존 Word의 편의 기능 행은 새 캡처로 갱신이 필요합니다. 비밀번호·JWT·배포 토큰·DB·촬영 자료는 Git에서 제외합니다. 미디어 UUID URL 자체는 공개이므로 실제 사생활 영상 서비스에는 인증된 미디어 전송 구성을 추가해야 합니다. 제출 증빙은 공식 공개 예제만 사용합니다.
+최신 편의 기능 상태는 `docs/evidence/monitoring-20261110/status.json`을 참조하세요. 루트 Word의 편의 기능 행과 확대 증빙도 최신 상태입니다. 비밀번호·JWT·배포 토큰·DB·촬영 자료는 Git에서 제외합니다. 미디어 UUID URL 자체는 공개이므로 실제 사생활 영상 서비스에는 인증된 미디어 전송 구성을 추가해야 합니다. 제출 증빙은 공식 공개 예제만 사용합니다.

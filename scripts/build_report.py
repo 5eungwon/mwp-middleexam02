@@ -25,6 +25,10 @@ FEATURES = json.loads((E / 'monitoring-20261110/status.json').read_text()) if ar
 if FEATURES:
     STATE = dict(STATE, overall=FEATURES['summary'], test_summary=FEATURES['test_summary'])
 doc = Document(ROOT / 'docs/templates/report-template.docx')
+for section in doc.sections:
+    for paragraph in section.header.paragraphs:
+        if '공통평가 01' in paragraph.text:
+            paragraph.text = '모바일 웹서비스 프로젝트 공통평가 02 수행 결과 보고서'
 for p in doc.paragraphs:
     if p.text.strip() == '학번 :': p.text = '학번 : 2021105579'
     if p.text.strip() == '이름 :': p.text = '이름 : 김승원'
@@ -104,6 +108,8 @@ feature_rows = [
  (14,'10-2','Client','확인 완료 처리','Android 확인 완료 버튼이 서버에 상태를 저장하고 완료 상태를 표시. 추가 편의 기능 2의 Client 구현.',['android-acknowledged.png'],STATE.get('acknowledge') == '완료'),
 ]
 if FEATURES:
+    FIGURES.pop('tests.png', None)
+    FIGURES['monitoring-20261110/report-tests.png'] = ('A11 최신 자동 테스트 실행 기록', '실제 최신 실행 로그의 브라우저 캡처. Django 28개·엣지 16개 통과, Android 빌드·Lint 성공을 확인했습니다.')
     for name in ['web-search.png', 'web-unread.png', 'android-unread.png', 'android-search.png', 'android-acknowledged.png', 'web-acknowledged.png']:
         FIGURES.pop(name, None)
     prefix = 'features-20261110/'
@@ -129,11 +135,18 @@ for index, ident, category, name, description, files, ok in feature_rows:
     for cell,value in zip(cells[:4],[ident,category,name,description]): cell.text=value
     fill(index,ok,files)
 
+def figure_order(item):
+    import re
+    match = re.match(r'A(\d+)(?:-(\d+))?', item[1][0])
+    return (int(match.group(1)), int(match.group(2) or 0)) if match else (99, 0)
+
+FIGURES = dict(sorted(FIGURES.items(), key=figure_order))
+
 # Evidence appendices retain full resolution while providing a readable display
 # size, in addition to the thumbnails in each original related-evidence cell.
 doc.add_page_break()
 doc.add_heading('구현·검증 개요',level=1)
-doc.add_paragraph('원본 공통평가 02 Word 양식의 1~10 요구사항을 모두 대조해 원본 표의 완료 여부, 판정과 관련증빙을 작성했습니다. 편의 기능은 2개이며 서버/클라이언트 구현을 각각 별도 행에 기록했습니다. 이미지는 원본 바이트를 문서에 포함했고 자동 압축을 껐습니다.')
+doc.add_paragraph('원본 공통평가 02 Word 양식의 1~10 요구사항을 모두 대조해 원본 표의 완료 여부, 판정과 관련증빙을 작성했습니다. 편의 기능은 2개이며 서버/클라이언트 구현을 각각 별도 행에 기록했습니다. 캡처와 검출 결과 이미지를 문서에 내장했습니다.')
 doc.add_paragraph('작성일: '+datetime.now(ZoneInfo('Asia/Seoul')).strftime('%Y-%m-%d %H:%M KST'))
 doc.add_paragraph('현재 상태: '+STATE.get('overall','로컬 구현 검증 완료 · 클라우드 배포 인증정보 확인 필요'))
 doc.add_paragraph('클라우드 서비스: https://asdfgh0986.pythonanywhere.com / 강의 API: https://asdfgh0986.pythonanywhere.com/api_root/Post/ (로그인 필요)')
