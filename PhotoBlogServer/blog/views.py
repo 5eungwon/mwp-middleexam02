@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
-from django.db import connection, transaction
+from django.db import connection
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -16,7 +16,7 @@ from .authentication import create_token
 from .forms import PostForm
 from .models import Post, DetectionSettings, PushDevice
 from .serializers import PostSerializer, DetectionSettingsSerializer, PushDeviceSerializer
-from .push import enqueue_post, transport_status
+from .push import transport_status
 
 class LoginThrottle(AnonRateThrottle):
     scope = 'login'
@@ -48,9 +48,15 @@ class PostViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return filter_posts(Post.objects.filter(author=self.request.user).select_related('author'), self.request.query_params)
 
+    def create(self, request, *args, **kwargs):
+        prefs, _ = DetectionSettings.objects.get_or_create(owner=request.user)
+        if not prefs.monitoring_enabled:
+            return Response({'detail': '감시가 중지되어 새 감지 기록을 등록하지 않습니다.',
+                             'code': 'monitoring_paused'}, status=423)
+        return super().create(request, *args, **kwargs)
+
     def perform_create(self, serializer):
-        post = serializer.save(author=self.request.user)
-        transaction.on_commit(lambda: enqueue_post(post.pk))
+        serializer.save(author=self.request.user)
 
     @action(detail=True, methods=['post'])
     def acknowledge(self, request, pk=None):
@@ -99,7 +105,6 @@ def upload(request):
         post = form.save(commit=False)
         post.author = request.user
         post.save()
-        transaction.on_commit(lambda: enqueue_post(post.pk))
         messages.success(request, '사진이 등록되었습니다.')
         return redirect('detail', pk=post.pk)
     return render(request, 'blog/upload.html', {'form': form})
@@ -148,5 +153,5 @@ def unregister_push_device(request, installation_id):
 def settings_page(request):
     prefs, _ = DetectionSettings.objects.get_or_create(owner=request.user)
     preview = Post.objects.filter(author=request.user).first()
-    values = {key: getattr(prefs, key) for key in ['zone_enabled', 'zone_name', 'left', 'top', 'right', 'bottom', 'notifications_enabled']}
+    values = {key: getattr(prefs, key) for key in ['monitoring_enabled', 'zone_enabled', 'zone_name', 'left', 'top', 'right', 'bottom']}
     return render(request, 'blog/settings.html', {'prefs': prefs, 'preview': preview, 'zone_values': values, 'push': transport_status(request.user)})

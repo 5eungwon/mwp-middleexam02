@@ -36,6 +36,14 @@ class ChangeDetection:
         self.session = session or requests.Session()
         self.timeout = timeout
         self.token = None
+        self.monitoring_enabled = True
+        self.server_paused = False
+
+    def set_monitoring(self, enabled):
+        enabled = bool(enabled)
+        if enabled != self.monitoring_enabled:
+            self.result_prev = [0] * len(self.names)
+        self.monitoring_enabled = enabled
 
     def authenticate(self):
         response = self.session.post(
@@ -48,6 +56,8 @@ class ChangeDetection:
         # Tokens and passwords must never be included in logs.
 
     def add(self, names, detected_current, save_dir, image, zone_name=''):
+        if not self.monitoring_enabled:
+            return []
         current_names = list(names.values()) if isinstance(names, dict) else list(names)
         if current_names != self.names or len(detected_current) != len(self.names):
             raise ValueError('Class names and presence-vector length must remain stable')
@@ -92,6 +102,8 @@ class ChangeDetection:
 
     def flush(self, save_dir):
         uploaded = []
+        if not self.monitoring_enabled:
+            return uploaded
         for manifest in sorted((Path(save_dir) / 'outbox').glob('*.json')):
             event = json.loads(manifest.read_text(encoding='utf-8'))
             # Bind every queued event to this deployment/account; the private
@@ -103,6 +115,16 @@ class ChangeDetection:
                 if response.status_code in (401, 403):
                     self.authenticate()
                     response = self._post(manifest.parent, event)
+                if response.status_code == 423:
+                    # A cached ON setting must not resend paused events on resume.
+                    archive = manifest.parent.parent / 'paused'
+                    archive.mkdir(parents=True, exist_ok=True)
+                    (manifest.parent / event['image_file']).replace(archive / event['image_file'])
+                    manifest.replace(archive / manifest.name)
+                    self.set_monitoring(False)
+                    self.server_paused = True
+                    LOG.info('Server paused monitoring; event retained locally without retry')
+                    break
                 response.raise_for_status()
                 post = response.json()
                 if response.status_code != 201 or 'id' not in post:

@@ -1,0 +1,28 @@
+{
+  "result": "PASS",
+  "app_url": "http://10.0.2.2:8002",
+  "cases": [
+    {
+      "requested": false,
+      "server_value": false,
+      "result": "PASS"
+    },
+    {
+      "requested": true,
+      "server_value": true,
+      "result": "PASS"
+    }
+  ],
+  "installed_apk_matches_build": true,
+  "installed_apk_sha256": "6468805af813fb15c71798f2d9bbfae765d3aa7b186b43ba3fc5cb0da3169185",
+  "initial_monitoring_state_restored": true,
+  "firebase_required": false,
+  "verified": [
+    "native_login",
+    "native_settings",
+    "off_persisted_to_server",
+    "on_persisted_to_server",
+    "same_tested_apk"
+  ],
+  "original_monitoring_state": true
+}

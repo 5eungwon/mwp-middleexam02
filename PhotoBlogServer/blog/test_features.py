@@ -30,6 +30,7 @@ class DetectionFeatureTests(TestCase):
         response = self.api.get('/api/settings/')
         self.assertEqual(response.status_code, 200)
         self.assertFalse(response.data['zone_enabled'])
+        self.assertTrue(response.data['monitoring_enabled'])
         self.assertEqual([response.data[k] for k in ['left', 'top', 'right', 'bottom']], [0, 0, 1, 1])
         self.assertFalse(response.data['push']['configured'])
 
@@ -48,7 +49,33 @@ class DetectionFeatureTests(TestCase):
     def test_settings_web_requires_login_and_renders_configuration_state(self):
         self.assertEqual(self.client.get('/settings/').status_code, 302)
         self.client.force_login(self.user)
-        self.assertContains(self.client.get('/settings/'), 'Firebase 연결 설정이 필요합니다')
+        self.assertContains(self.client.get('/settings/'), '원격 감시 ON/OFF')
+
+    def test_monitoring_toggle_is_persistent_and_account_scoped(self):
+        self.assertEqual(self.api.patch('/api/settings/', {'monitoring_enabled': False}, format='json').status_code, 200)
+        self.assertFalse(self.api.get('/api/settings/').data['monitoring_enabled'])
+        self.api.credentials(HTTP_AUTHORIZATION='JWT '+create_token(self.other))
+        self.assertTrue(self.api.get('/api/settings/').data['monitoring_enabled'])
+
+    def test_paused_server_blocks_new_records_but_preserves_reads_and_resume(self):
+        from .tests import photo
+        import tempfile
+        with tempfile.TemporaryDirectory() as directory, override_settings(MEDIA_ROOT=directory):
+            existing=Post.objects.create(author=self.user,title='existing',image='test.jpg')
+            self.api.patch('/api/settings/', {'monitoring_enabled': False}, format='json')
+            blocked=self.api.post('/api_root/Post/', {'title':'person','image':photo()}, format='multipart')
+            self.assertEqual(blocked.status_code,423)
+            self.assertEqual(blocked.data['code'],'monitoring_paused')
+            self.assertEqual(Post.objects.count(),1)
+            self.assertEqual(self.api.get(f'/api_root/Post/{existing.pk}/').status_code,200)
+            self.api.patch('/api/settings/', {'monitoring_enabled': True}, format='json')
+            accepted=self.api.post('/api_root/Post/', {'title':'person','image':photo()}, format='multipart')
+            self.assertEqual(accepted.status_code,201)
+
+    def test_monitoring_patch_does_not_change_saved_region(self):
+        self.api.patch('/api/settings/', {'zone_enabled':True,'left':.2,'right':.8}, format='json')
+        response=self.api.patch('/api/settings/', {'monitoring_enabled':False}, format='json')
+        self.assertEqual((response.data['left'],response.data['right'],response.data['zone_enabled']),(.2,.8,True))
 
     def test_device_binding_is_registered_without_exposing_token(self):
         response = self.register()

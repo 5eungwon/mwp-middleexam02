@@ -57,3 +57,11 @@ API 로그인 요청은 IP별 1분당 10회로 제한합니다. 로컬 비밀키
 배포 설정에서는 DEBUG 해제, HTTPS 리다이렉트, secure cookie, HSTS가 적용됩니다. 설정 파일의 비밀키와 도메인을 환경변수로 내보낸 상태에서 `python manage.py check --deploy`도 실행합니다. 클라우드 동작 증빙은 실제 배포 후 별도로 캡처해야 합니다. 로컬 실행 결과는 PythonAnywhere 배포 증빙이 아닙니다.
 
 현재 `check --deploy`의 W005(HSTS 하위 도메인)와 W021(HSTS preload)은 도메인 관리 정책을 확인하기 전까지 의도적으로 설정하지 않아 출력됩니다. 서비스의 모든 하위 도메인이 HTTPS로 동작하는지와 브라우저 preload 등록 여부를 확인한 후 운영자가 결정합니다. 일반 `check`는 경고 없이 통과합니다.
+
+## 감시 영역과 원격 감시 설정
+
+로그인 후 `GET/PATCH /api/settings/`로 본인 계정의 `zone_enabled`, `zone_name`, `left/top/right/bottom`, `monitoring_enabled`를 읽고 수정합니다. 웹 `/settings/`에서도 영역 편집과 감시 작동 ON/OFF를 제공합니다. 두 설정은 독립적으로 저장합니다.
+
+`monitoring_enabled=false`이면 신규 `POST /api_root/Post/`는 423과 `code=monitoring_paused`를 반환합니다. 기존 기록 조회·확인 처리와 수동 웹 사진 등록은 계속 가능합니다. 계정별 상태이므로 다른 사용자의 감시 설정을 바꿀 수 없습니다. YOLO는 기본 5초마다 조회하며 OFF 때 추론·자동 등록을 멈추고 ON 때 감지를 재개합니다.
+
+기존 DB 호환용 푸시 테이블과 수동 발송 코드는 남아 있지만 새 사진의 자동 푸시 작업 생성은 제거했습니다. 현재 평가 기능은 감시 영역과 원격 감시 ON/OFF이며 Android 앱은 Firebase를 사용하지 않습니다.

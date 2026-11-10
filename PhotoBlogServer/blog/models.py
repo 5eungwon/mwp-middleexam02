@@ -33,6 +33,7 @@ class Post(models.Model):
 class DetectionSettings(models.Model):
     owner = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='detection_settings')
     zone_enabled = models.BooleanField(default=False)
+    monitoring_enabled = models.BooleanField('감시 작동', default=True)
     zone_name = models.CharField(max_length=80, default='현관')
     left = models.FloatField(default=0, validators=[MinValueValidator(0), MaxValueValidator(1)])
     top = models.FloatField(default=0, validators=[MinValueValidator(0), MaxValueValidator(1)])

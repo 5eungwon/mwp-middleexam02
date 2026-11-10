@@ -1,5 +1,5 @@
 {% extends 'blog/base.html' %}
-{% block title %}감시 영역과 알림 · 우리집 지킴이{% endblock %}
+{% block title %}감시 영역과 원격 제어 · 우리집 지킴이{% endblock %}
 {% block content %}
 <p class="eyebrow">DETECTION SETTINGS</p><h1>감시할 공간을 정하세요.</h1>
 <p class="sub">사진 위를 드래그해 영역을 지정하세요. YOLO는 사람의 발밑 중심점이 영역 안에 새로 나타날 때 기록합니다.</p>
@@ -12,8 +12,8 @@
 <div style="display:flex;gap:16px;flex-wrap:wrap;margin:20px 0">{% for key in '1234' %}<label><span class="coordinate-label"></span> <input class="coordinate" type="number" min="0" max="100" step="0.1" style="width:80px;padding:9px;border:1px solid #ccd5dc;border-radius:8px"> %</label>{% endfor %}</div>
 <p class="sub">영역 기능을 끄면 전체 화면을 감시합니다. 설정은 같은 계정으로 로그인한 엣지 프로그램이 주기적으로 가져갑니다.</p>
 <hr style="border:0;border-top:1px solid #e5e9ed;margin:26px 0">
-<label><input type="checkbox" id="notifications_enabled"> 새 감지 사진 푸시 알림</label>
-<p class="sub" style="margin-top:10px">{% if push.configured %}서버 발송 설정 준비됨 · 등록 기기 {{ push.registered_devices }}대. Android 앱에서 알림을 허용하고 기기를 연결하세요.{% else %}Firebase 연결 설정이 필요합니다. 서버 키와 Android 설정 파일이 준비되기 전에는 푸시를 발송하지 않습니다.{% endif %}</p>
+<h2>원격 감시 ON/OFF</h2><label style="display:block;margin:18px 0"><input type="checkbox" id="monitoring_enabled"> 감시 작동</label>
+<p id="monitoring-status" role="status" class="sub"></p><p class="sub">OFF 상태에서는 새로운 감지 사진을 등록하지 않습니다. 기존 기록은 계속 볼 수 있고 감시 영역 설정도 유지됩니다. ON으로 바꾸면 YOLO가 다음 설정 조회 때 감지를 재개합니다.</p>
 <button class="primary" style="margin-top:26px" type="submit">설정 저장</button><p id="save-status" role="status" class="sub" style="margin-top:14px"></p>
 </form>
 {{ zone_values|json_script:'zone-values' }}
@@ -23,13 +23,17 @@ const names=['left','top','right','bottom'],labels=['왼쪽','위쪽','오른쪽
 const fields=Array.from(document.querySelectorAll('.coordinate'));
 document.querySelectorAll('.coordinate-label').forEach((el,i)=>el.textContent=labels[i]);
 names.forEach((key,i)=>fields[i].value=(values[key]*100).toFixed(1));
-['zone_enabled','notifications_enabled'].forEach(key=>document.getElementById(key).checked=values[key]);
+['zone_enabled'].forEach(key=>document.getElementById(key).checked=values[key]);
 document.getElementById('zone_name').value=values.zone_name;
 const canvas=document.getElementById('zone-canvas'),image=document.getElementById('preview-image');let start=null;
 function coords(){return Object.fromEntries(names.map((key,i)=>[key,Number(fields[i].value)/100]));}
 function draw(){if(!canvas||!image.complete||!image.naturalWidth)return;const c=canvas.getContext('2d'),r=coords(),w=canvas.width,h=canvas.height;c.drawImage(image,0,0,w,h);c.fillStyle='#14213d55';c.fillRect(0,0,w,r.top*h);c.fillRect(0,r.bottom*h,w,h-r.bottom*h);c.fillRect(0,r.top*h,r.left*w,(r.bottom-r.top)*h);c.fillRect(r.right*w,r.top*h,w-r.right*w,(r.bottom-r.top)*h);c.strokeStyle='#31e5a8';c.lineWidth=Math.max(2,w/200);c.strokeRect(r.left*w,r.top*h,(r.right-r.left)*w,(r.bottom-r.top)*h);}
 fields.forEach(f=>f.addEventListener('input',draw));
 if(canvas){function load(){canvas.width=image.naturalWidth;canvas.height=image.naturalHeight;draw();}image.addEventListener('load',load);if(image.complete)load();function point(e){const r=canvas.getBoundingClientRect();return [Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)),Math.max(0,Math.min(1,(e.clientY-r.top)/r.height))];}canvas.onpointerdown=e=>{start=point(e);canvas.setPointerCapture(e.pointerId);};canvas.onpointermove=e=>{if(!start)return;const p=point(e),r=[Math.min(start[0],p[0]),Math.min(start[1],p[1]),Math.max(start[0],p[0]),Math.max(start[1],p[1])];r.forEach((v,i)=>fields[i].value=(v*100).toFixed(1));draw();};canvas.onpointerup=()=>start=null;canvas.onpointercancel=()=>start=null;}
-document.getElementById('settings-form').onsubmit=async e=>{e.preventDefault();const status=document.getElementById('save-status');status.textContent='설정을 저장하고 있습니다…';try{const response=await fetch('{% url "detection-settings" %}',{method:'PATCH',headers:{'Content-Type':'application/json','X-CSRFToken':document.querySelector('[name=csrfmiddlewaretoken]').value},body:JSON.stringify({...coords(),zone_name:document.getElementById('zone_name').value,zone_enabled:document.getElementById('zone_enabled').checked,notifications_enabled:document.getElementById('notifications_enabled').checked})});if(!response.ok){status.textContent='저장 실패: '+JSON.stringify(await response.json());return;}status.textContent='설정이 저장되었습니다. 엣지가 다음 설정 조회 때 적용합니다.';}catch(error){status.textContent='서버 연결을 확인하고 다시 저장해주세요.';}};
+document.getElementById('settings-form').onsubmit=async e=>{e.preventDefault();const status=document.getElementById('save-status');status.textContent='설정을 저장하고 있습니다…';try{const response=await fetch('{% url "detection-settings" %}',{method:'PATCH',headers:{'Content-Type':'application/json','X-CSRFToken':document.querySelector('[name=csrfmiddlewaretoken]').value},body:JSON.stringify({...coords(),zone_name:document.getElementById('zone_name').value,zone_enabled:document.getElementById('zone_enabled').checked})});if(!response.ok){status.textContent='저장 실패: '+JSON.stringify(await response.json());return;}status.textContent='설정이 저장되었습니다. 엣지가 다음 설정 조회 때 적용합니다.';}catch(error){status.textContent='서버 연결을 확인하고 다시 저장해주세요.';}};
+const monitoring=document.getElementById('monitoring_enabled'),modeStatus=document.getElementById('monitoring-status');
+function modeLabel(on){return on?'감시 ON · 새 객체 출현을 기록합니다.':'감시 OFF · 새 감지 사진 등록이 중지되었습니다.';}
+monitoring.checked=values.monitoring_enabled;modeStatus.textContent=modeLabel(monitoring.checked);
+monitoring.onchange=async()=>{const desired=monitoring.checked;monitoring.disabled=true;modeStatus.textContent='감시 상태를 저장하고 있습니다…';try{const response=await fetch('{% url "detection-settings" %}',{method:'PATCH',headers:{'Content-Type':'application/json','X-CSRFToken':document.querySelector('[name=csrfmiddlewaretoken]').value},body:JSON.stringify({monitoring_enabled:desired})});if(!response.ok)throw new Error('HTTP '+response.status);const saved=await response.json();if(saved.monitoring_enabled!==desired)throw new Error('State mismatch');modeStatus.textContent=modeLabel(desired);}catch(error){monitoring.checked=!desired;modeStatus.textContent='저장하지 못했습니다. 연결을 확인하고 다시 시도하세요.';}finally{monitoring.disabled=false;}};
 </script>
 {% endblock %}

@@ -15,11 +15,14 @@ def validate_zone(values):
     if rect[2] - rect[0] < .02 or rect[3] - rect[1] < .02:
         raise ValueError('Zone must have width and height of at least 2%')
     return dict(zip(['left', 'top', 'right', 'bottom'], rect),
+                monitoring_enabled=bool(values.get('monitoring_enabled', True)),
                 zone_enabled=bool(values.get('zone_enabled', False)),
                 zone_name=str(values.get('zone_name', '현관'))[:80])
 
 
 def eligible_detections(detections, image_shape, zone):
+    if not zone.get('monitoring_enabled', True):
+        return []
     if not zone['zone_enabled']:
         return list(detections)
     height, width = image_shape[:2]
@@ -33,6 +36,12 @@ def eligible_detections(detections, image_shape, zone):
 
 
 def draw_zone(image, zone):
+    if not zone.get('monitoring_enabled', True):
+        import cv2
+        output = image.copy()
+        cv2.rectangle(output, (0, 0), (output.shape[1], 46), (30, 35, 45), -1)
+        cv2.putText(output, 'MONITORING PAUSED', (14, 31), cv2.FONT_HERSHEY_SIMPLEX, .8, (255, 255, 255), 2)
+        return output
     if not zone['zone_enabled']:
         return image
     import cv2
@@ -79,3 +88,8 @@ class RemoteZone:
             if self.current is None:
                 raise RuntimeError('No verified zone configuration. Check the server connection before uploading.') from None
         return self.current
+
+    def pause_until_refreshed(self):
+        if self.current is not None:
+            self.current = dict(self.current, monitoring_enabled=False)
+        self.last_attempt = -float('inf')

@@ -1,0 +1,12 @@
+{
+  "updated_at": "2026-11-10",
+  "roi": "verified",
+  "remote_monitoring": "verified",
+  "push": "replaced",
+  "firebase_required": false,
+  "summary": "감시 영역 설정과 원격 감시 ON/OFF 구현·클라우드·실제 Android 검증 완료. 푸시 알림을 원격 제어로 교체.",
+  "test_summary": "Django 28개 및 엣지 16개 테스트 통과. Android 빌드·Lint 성공(오류 0개, Gradle 안내 경고 1개). 실제 동일 YOLO 인스턴스에서 ON 1건/OFF 0건/ON 1건, HTTP 423 차단, 클라우드 Android·웹 스위치 저장을 검증.",
+  "cloud_deployment": "cloud-deployment.json",
+  "apk_sha256": "6468805af813fb15c71798f2d9bbfae765d3aa7b186b43ba3fc5cb0da3169185",
+  "report_policy": "사용자가 수정한 루트 Word 제출본 보존. 새 캡처와 --feature-update 생성 코드를 준비했으며 이번 작업에서 Word 생성·렌더링 검증은 수행하지 않음."
+}

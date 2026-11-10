@@ -2,21 +2,21 @@
 
 ## 2026년 11월 10일 현재 환경
 
-감시 영역 API·웹 설정과 푸시 준비 코드를 2026-11-10T16:34:59.475652+09:00에 재배포했습니다. **감시 영역 기능은 실제 클라우드 YOLO 전송 및 Android 저장으로 검증했고, Firebase 연결·실제 알림 수신은 사용자 요청으로 보류했습니다.**
+감시 영역과 **원격 감시 ON/OFF**를 2026-11-10 20:19 KST에 배포했습니다. 푸시 알림을 원격 제어로 교체해 현재 앱에 Firebase 설정이 필요하지 않습니다. 실제 HTTPS 로그인·계정별 설정·YOLO 등록 및 Android/웹 스위치를 검증했습니다.
 
 | 항목 | 현재 경로 |
 |---|---|
-| 소스 | `/home/asdfgh0986/home-guardian-assessment02/releases/20261110-073148/PhotoBlogServer` |
+| 소스 | `/home/asdfgh0986/home-guardian-assessment02/releases/20261110-111815/PhotoBlogServer` |
 | 가상환경 | `/home/asdfgh0986/.virtualenvs/home-guardian-assessment02-20261110-073148` |
-| DB | `/home/asdfgh0986/home-guardian-assessment02/data/20261110-073148/db.sqlite3` |
-| 미디어 | `/home/asdfgh0986/home-guardian-assessment02/data/20261110-073148/media` |
-| 직전 환경 백업 | `/home/asdfgh0986/photoblog-backups/before-assessment02-20261110-073148` |
+| DB | `/home/asdfgh0986/home-guardian-assessment02/data/20261110-111815/db.sqlite3` |
+| 미디어 | `/home/asdfgh0986/home-guardian-assessment02/data/20261110-111815/media` |
+| 직전 환경 백업 | `/home/asdfgh0986/photoblog-backups/before-assessment02-20261110-111815` |
 
-재배포 도구는 기존 WSGI에서 실제 외부 DB·미디어 위치를 읽어 백업하고, DB·사진을 새 릴리스 데이터 폴더에 복제한 뒤 새 가상환경에서 마이그레이션합니다. 기존 사용자 계정은 비밀번호를 재설정하지 않고 보존합니다. SQLite 백업 무결성은 `ok`였습니다.
+디스크 할당량 부족으로 새 가상환경 생성이 실패한 첫 시도는 기존 WSGI로 자동 복구했습니다. 실패한 미사용 가상환경만 정리한 뒤 `--reuse-existing-virtualenv`로 재배포했습니다. 이 옵션은 현재 가상환경의 모든 고정 패키지 버전과 `pip check`를 검사하고 패키지를 설치·변경하지 않습니다. 새 릴리스·DB·미디어는 별도 경로입니다.
 
-이번 버전에서 직전 과제02 환경으로 되돌리려면 백업의 `previous-wsgi.py`를 `/var/www/asdfgh0986_pythonanywhere_com_wsgi.py`에 복원하고, 백업의 `previous-web-settings.json`과 `previous-static-mappings.json`대로 Web 설정을 되돌린 후 Reload합니다. 직전 소스는 `releases/20261106-083539/PhotoBlogServer`, 가상환경은 `~/.virtualenvs/home-guardian-assessment02`, 데이터는 `~/home-guardian-assessment02/data/`이며 그대로 보존했습니다.
+도구는 기존 WSGI에서 실제 외부 DB·미디어 위치를 읽어 백업하고 복제한 뒤 마이그레이션합니다. 기존 계정의 비밀번호는 재설정하지 않습니다. DB 백업 무결성은 `ok`였습니다. 직전 소스·DB·미디어는 `20261110-073148` 경로에 그대로 남습니다. 복구 시 백업의 `previous-wsgi.py`, `previous-web-settings.json`, `previous-static-mappings.json`을 복원하고 Reload합니다. 공유 가상환경 패키지는 이번 배포에서 변경하지 않았습니다.
 
-최신 증빙은 `docs/evidence/features-20261110/`에 있습니다. 다음 절의 11월6일 경로는 최초 배포 당시 기록이며 현재 경로와 구분합니다.
+최신 증빙은 `docs/evidence/monitoring-20261110/`입니다. 11월6일 경로는 최초 배포 당시 기록입니다.
 
 ## 2026년 11월 6일 최초 배포 기록
 

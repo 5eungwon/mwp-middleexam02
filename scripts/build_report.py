@@ -15,13 +15,13 @@ ROOT = Path(__file__).resolve().parent.parent
 E = ROOT / 'docs/evidence'
 parser = argparse.ArgumentParser()
 parser.add_argument('--output', type=Path)
-parser.add_argument('--feature-update', action='store_true', help='Use the verified ROI / deferred Firebase feature status')
+parser.add_argument('--feature-update', action='store_true', help='Use the verified ROI / remote monitoring feature status')
 args = parser.parse_args()
 OUTPUT = args.output or ROOT / '모바일웹서비스 프로젝트_공통평가 02_수행 결과 보고서.docx'
 if args.output is None and list(ROOT.glob('~$*02*보고서.docx')):
     raise SystemExit('보고서가 Word에서 열려 있는 것으로 보입니다. 저장 후 닫거나 --output으로 별도 파일을 지정하세요.')
 STATE = json.loads((E / 'submission-status.json').read_text()) if (E / 'submission-status.json').exists() else {}
-FEATURES = json.loads((E / 'features-20261110/status.json').read_text()) if args.feature_update else None
+FEATURES = json.loads((E / 'monitoring-20261110/status.json').read_text()) if args.feature_update else None
 if FEATURES:
     STATE = dict(STATE, overall=FEATURES['summary'], test_summary=FEATURES['test_summary'])
 doc = Document(ROOT / 'docs/templates/report-template.docx')
@@ -108,20 +108,21 @@ if FEATURES:
         FIGURES.pop(name, None)
     prefix = 'features-20261110/'
     FIGURES.update({
-        prefix+'web-zone.png': ('A10-1 · 감시 영역 서버 설정', '실제 클라우드 웹에서 같은 계정의 감시 영역과 알림 설정을 조회한 화면입니다.'),
-        prefix+'cloud-android/android-zone.png': ('A10-2 · Android 감시 영역 지정', '실제 Android 앱에서 사진 위를 드래그해 지정한 정규화 좌표를 클라우드 서버에 저장했습니다.'),
+        'monitoring-20261110/cloud-web/web-monitoring-on.png': ('A10-1 · 감시 영역 서버 설정', '실제 클라우드 웹에서 같은 계정의 감시 영역과 원격 제어 설정을 조회한 화면입니다.'),
+        'monitoring-20261110/cloud-android/android-zone.png': ('A10-2 · Android 감시 영역 지정', '이전 실제 드래그로 저장한 정규화 좌표를 최신 Android 앱에서 클라우드 API로 다시 조회한 화면입니다.'),
         prefix+'cloud-roi/roi-outside.jpg': ('A10-3 · 실제 YOLO 영역 밖 판정', '같은 공식 예제 사진에서 지정 영역 밖의 사람은 기록을 생성하지 않았습니다. 실제 카메라 이동 장면을 촬영한 증빙은 아닙니다.'),
         prefix+'cloud-roi/roi-inside.jpg': ('A10-4 · 실제 YOLO 영역 안 판정', '지정 영역 안의 사람을 실제 모델로 검출하고 사진 한 건을 클라우드에 등록했습니다.'),
-        prefix+'web-push-pending.png': ('A10-5 · 서버 Firebase 연결 대기', 'FCM 발송 코드는 준비되어 있으나 Firebase 프로젝트 연결과 실제 발송 검증은 사용자 요청으로 보류했습니다.'),
-        prefix+'cloud-android/android-push-pending.png': ('A10-6 · Android 푸시 연결 대기', '설정 파일이 없어 알림 스위치가 비활성화된 실제 화면입니다. 알림 수신 성공 증빙이 아닙니다.'),
+        'monitoring-20261110/cloud-web/web-monitoring-off.png': ('A10-5 · 웹에서 원격 감시 OFF', '실제 웹 스위치의 OFF 상태를 API로 다시 조회해 저장을 확인했습니다. 서버는 새 감지 사진 등록을 423으로 거부합니다.'),
+        'monitoring-20261110/cloud-android/android-monitoring-on.png': ('A10-6 · Android에서 원격 감시 ON', '실제 Android 스위치의 ON 상태가 같은 계정의 클라우드 서버에 저장됨을 확인했습니다. Firebase 연결은 필요하지 않습니다.'),
+        'monitoring-20261110/cloud/off.jpg': ('A10-7 · 실제 YOLO 원격 중지', '동일 YOLO 인스턴스에서 ON 1건, OFF 0건, ON 복귀 1건을 검증했습니다. 공개 정지 이미지 검증이며 카메라 전원을 끄는 기능은 아닙니다.'),
     })
     roi_ok = FEATURES['roi'] == 'verified'
-    push_ok = FEATURES['push'] == 'verified'
+    monitoring_ok = FEATURES['remote_monitoring'] == 'verified'
     feature_rows = [
-        (11,'10-1','Server / Edge','감시 영역 설정','사용자별 영역 저장과 YOLO의 영역 진입 0→1 판정. 실제 정지 이미지로 영역 밖 0건/영역 안 1건 전송 검증.',[prefix+'web-zone.png',prefix+'cloud-roi/roi-inside.jpg'],roi_ok),
-        (12,'10-1','Client','감시 영역 설정','사진 위에서 드래그하고 저장한 좌표가 클라우드 서버에 반영되는 것을 실제 Android에서 확인.',[prefix+'cloud-android/android-zone.png'],roi_ok),
-        (13,'10-2','Server','감지 푸시 알림','FCM 발송 작업 저장·실패 처리 및 모의 통신 테스트 준비. Firebase 프로젝트 연결과 실제 전송은 보류.',[prefix+'web-push-pending.png'],push_ok),
-        (14,'10-2','Client','감지 푸시 알림','알림 권한·FCM 기기 등록·알림 클릭 상세 이동 코드 준비. 실제 Firebase 수신은 보류.',[prefix+'cloud-android/android-push-pending.png'],push_ok),
+        (11,'10-1','Server / Edge','감시 영역 설정','사용자별 영역 저장과 YOLO의 영역 진입 0→1 판정. 실제 정지 이미지로 영역 밖 0건/영역 안 1건 전송 검증.',['monitoring-20261110/cloud-web/web-monitoring-on.png',prefix+'cloud-roi/roi-inside.jpg'],roi_ok),
+        (12,'10-1','Client','감시 영역 설정','사진 위에서 드래그하고 저장한 좌표가 클라우드 서버에 반영되는 것을 실제 Android에서 확인.',['monitoring-20261110/cloud-android/android-zone.png'],roi_ok),
+        (13,'10-2','Server / Edge','원격 감시 ON/OFF','계정별 작동 상태 저장, OFF 중 API 등록 423 차단, YOLO 추론·전송 중지 및 ON 재개. 실제 ON 1건/OFF 0건/ON 1건 검증.',['monitoring-20261110/cloud-web/web-monitoring-off.png','monitoring-20261110/cloud/off.jpg'],monitoring_ok),
+        (14,'10-2','Client','원격 감시 ON/OFF','Android 감시 작동 스위치 OFF/ON을 실제로 조작하고 클라우드 API 값으로 저장 상태 검증. Firebase 불필요.',['monitoring-20261110/cloud-android/android-monitoring-on.png'],monitoring_ok),
     ]
 for index, ident, category, name, description, files, ok in feature_rows:
     cells=table.rows[index].cells

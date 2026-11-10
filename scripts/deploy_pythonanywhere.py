@@ -105,7 +105,12 @@ try:
         subprocess.run(['python3.12', '-m', 'venv', str(environment)], check=True)
     python = str(environment / 'bin/python')
     project = release / 'PhotoBlogServer'
-    subprocess.run([python, '-m', 'pip', 'install', '-r', str(project / 'requirements.txt')], check=True)
+    if C.get('reuse_existing_virtualenv'):
+        check = "from importlib.metadata import version; from pip._vendor.packaging.requirements import Requirement; import pathlib,sys; reqs=[Requirement(l.strip()) for l in pathlib.Path(sys.argv[1]).read_text().splitlines() if l.strip() and not l.startswith('#')]; assert all(version(r.name) in r.specifier for r in reqs), 'Existing virtualenv does not satisfy requirements'"
+        subprocess.run([python, '-c', check, str(project / 'requirements.txt')], check=True)
+        subprocess.run([python, '-m', 'pip', 'check'], check=True)
+    else:
+        subprocess.run([python, '-m', 'pip', 'install', '--no-cache-dir', '-r', str(project / 'requirements.txt')], check=True)
     env = os.environ.copy()
     env.update(DJANGO_DEBUG='0', DJANGO_SECRET_KEY=incoming['secret_key'], DJANGO_ALLOWED_HOSTS=incoming['allowed_hosts'], DJANGO_DB_PATH=str(data / 'db.sqlite3'), DJANGO_MEDIA_ROOT=str(data / 'media'), FCM_SERVICE_ACCOUNT_FILE=incoming.get('fcm_service_account_file', ''))
     credentials = json.loads(credentials_path.read_text())
@@ -139,6 +144,7 @@ def main():
     activation.add_argument('--wsgi-bootstrap', action='store_true', help='Start preparation from a one-time WSGI wrapper while the previous app stays available')
     parser.add_argument('--credentials-file', type=Path, help='Private local JSON with username/password; generated outside repo if omitted')
     parser.add_argument('--evidence-output', type=Path, default=ROOT / 'docs/evidence/cloud-deployment.json')
+    parser.add_argument('--reuse-existing-virtualenv', action='store_true', help='Verify pinned packages and reuse current environment without installing packages')
     args = parser.parse_args()
     token = os.environ.get('PYTHONANYWHERE_API_TOKEN') or os.environ.get('API_TOKEN')
     if not token:
@@ -224,7 +230,12 @@ def main():
         'incoming_credentials': staging + '/incoming-credentials.json',
         'virtualenv': home + '/.virtualenvs/home-guardian-assessment02-' + stamp,
         'result': staging + '/prepare-result.json',
+        'reuse_existing_virtualenv': args.reuse_existing_virtualenv,
     }
+    if args.reuse_existing_virtualenv:
+        if not previous.get('virtualenv_path'):
+            raise DeploymentError('No existing virtualenv is configured')
+        prepare['virtualenv'] = previous['virtualenv_path']
     put_file(prepare['archive'], archive_source())
     put_file(prepare['incoming_config'], json.dumps(configuration).encode())
     put_file(prepare['incoming_credentials'], json.dumps(credentials).encode())
@@ -264,7 +275,7 @@ application = runpy.run_path({prepare['original_wsgi']!r})['application']
             put_file(wsgi, previous_wsgi)
             api('POST', app_path + 'reload/')
             raise
-    print('Source uploaded. Preparing separate environment, database and backup.', flush=True)
+    print('Source uploaded. Preparing isolated release/database; staging: ' + staging, flush=True)
     deadline = time.monotonic() + 600
     ready = None
     while time.monotonic() < deadline:

@@ -40,3 +40,38 @@ class ZoneTests(unittest.TestCase):
         detector = type('Detector', (), {'token': None, 'authenticate': lambda self: (_ for _ in ()).throw(ConnectionError())})()
         with tempfile.TemporaryDirectory() as directory:
             with self.assertRaises(RuntimeError): RemoteZone(detector, directory).get()
+
+    def test_disabled_monitoring_excludes_all_objects_even_without_roi(self):
+        zone=validate_zone({'monitoring_enabled':False,'zone_enabled':False})
+        self.assertEqual(eligible_detections([self.inside],(100,100,3),zone),[])
+
+    def test_off_never_flushes_pending_and_on_detects_held_person_again(self):
+        session=Session();cd=ChangeDetection(['person'],'http://localhost','test','test',session=session)
+        image=np.zeros((100,100,3),dtype=np.uint8)
+        with tempfile.TemporaryDirectory() as directory:
+            session.failures=[503]
+            self.assertEqual(cd.add(['person'],[1],directory,image),[])
+            self.assertEqual(len(list((Path(directory)/'outbox').glob('*.json'))),1)
+            session.failures=[503]
+            cd.set_monitoring(False)
+            self.assertEqual(cd.add(['person'],[1],directory,image),[])
+            self.assertEqual(cd.flush(directory),[])
+            self.assertEqual(session.failures,[503],'OFF must not attempt a pending upload')
+            self.assertEqual(len(session.uploads),0)
+            session.failures=[]
+            cd.set_monitoring(True)
+            self.assertEqual(len(cd.add(['person'],[1],directory,image)),2)
+            self.assertEqual(len(session.uploads),2)
+
+    def test_server_pause_quarantines_rejected_event_instead_of_retrying_on_resume(self):
+        session=Session();session.failures=[423]
+        cd=ChangeDetection(['person'],'http://localhost','test','test',session=session)
+        image=np.zeros((100,100,3),dtype=np.uint8)
+        with tempfile.TemporaryDirectory() as directory:
+            self.assertEqual(cd.add(['person'],[1],directory,image),[])
+            self.assertTrue(cd.server_paused)
+            self.assertEqual(len(list((Path(directory)/'paused').glob('*.json'))),1)
+            self.assertEqual(list((Path(directory)/'outbox').glob('*.json')),[])
+            cd.set_monitoring(True)
+            self.assertEqual(len(cd.add(['person'],[1],directory,image)),1)
+            self.assertEqual(len(session.uploads),1)

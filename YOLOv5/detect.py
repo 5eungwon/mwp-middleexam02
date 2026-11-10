@@ -131,7 +131,7 @@ def main():
     outbox = args.output / ('delivery-' + account)
     if not args.no_upload:
         detector = ChangeDetection(NAMES, args.host, args.username, monitored=args.classes)
-    remote_zone = RemoteZone(detector, outbox, args.settings_refresh) if detector and not args.zone else None
+    remote_zone = RemoteZone(detector, outbox, args.settings_refresh) if detector else None
     zone = validate_zone(dict(zip(['left', 'top', 'right', 'bottom'], args.zone or [0, 0, 1, 1]), zone_enabled=bool(args.zone), zone_name=args.zone_name))
     image_extensions = {'.jpg', '.jpeg', '.png', '.bmp', '.webp'}
     is_image = Path(args.source).suffix.lower() in image_extensions and Path(args.source).is_file()
@@ -154,10 +154,15 @@ def main():
                 if not ok:
                     break
             tick = time.perf_counter()
-            detections = model.infer(image)
-            elapsed = round((time.perf_counter() - tick) * 1000, 2)
             if remote_zone:
                 zone = remote_zone.get()
+                if args.zone:
+                    zone = dict(zone, **dict(zip(['left', 'top', 'right', 'bottom'], args.zone)), zone_enabled=True, zone_name=args.zone_name)
+            if detector:
+                detector.set_monitoring(zone['monitoring_enabled'])
+            tick = time.perf_counter()
+            detections = model.infer(image) if zone['monitoring_enabled'] else []
+            elapsed = round((time.perf_counter() - tick) * 1000, 2)
             accepted = eligible_detections(detections, image.shape, zone)
             detection_image = annotate(image, detections, set(args.classes))
             annotated = draw_zone(detection_image, zone)
@@ -166,6 +171,9 @@ def main():
             for detection in accepted:
                 presence[detection['class_id']] = 1
             uploaded = detector.add(NAMES, presence, outbox, detection_image, zone_name=zone['zone_name'] if zone['zone_enabled'] else '') if detector else []
+            if detector and detector.server_paused and remote_zone:
+                remote_zone.pause_until_refreshed()
+                detector.server_paused = False
             processed += 1
             record = {'frame': processed, 'inference_ms': elapsed,
                       'detections': detections, 'eligible_detections': accepted, 'zone': dict(zone), 'uploaded': uploaded}

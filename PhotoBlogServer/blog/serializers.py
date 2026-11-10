@@ -26,7 +26,7 @@ class DetectionSettingsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DetectionSettings
-        fields = ['zone_enabled', 'zone_name', 'left', 'top', 'right', 'bottom', 'notifications_enabled', 'updated_at', 'preview_image']
+        fields = ['monitoring_enabled', 'zone_enabled', 'zone_name', 'left', 'top', 'right', 'bottom', 'notifications_enabled', 'updated_at', 'preview_image']
         read_only_fields = ['updated_at', 'preview_image']
 
     def get_preview_image(self, instance):

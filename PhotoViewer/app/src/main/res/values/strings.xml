@@ -4,4 +4,7 @@
     <string name="record_count">조회된 기록 %1$d건 · %2$s</string>
     <string name="zone_shared_hint">같은 계정의 YOLO가 저장한 영역을 적용합니다.</string>
     <string name="zone_saved">저장 완료 · YOLO가 다음 설정 조회 때 적용합니다.</string>
+    <string name="monitoring_on">감시 ON · YOLO가 다음 설정 조회 때 감지를 재개합니다.</string>
+    <string name="monitoring_off">감시 OFF · 새 감지 사진 등록이 중지되었습니다.</string>
+    <string name="monitoring_saving">감시 상태를 저장하고 있습니다…</string>
 </resources>

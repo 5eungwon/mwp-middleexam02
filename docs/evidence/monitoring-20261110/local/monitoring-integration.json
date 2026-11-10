@@ -1,0 +1,143 @@
+{
+  "result": "PASS",
+  "captured_at_utc": "2026-11-10T11:11:07.144420+00:00",
+  "base_url": "http://127.0.0.1:8002",
+  "same_detector_instance": true,
+  "cases": [
+    {
+      "phase": "on_initial",
+      "monitoring_enabled": true,
+      "actual_model_executed": true,
+      "detections": [
+        {
+          "class_id": 0,
+          "name": "person",
+          "confidence": 0.822809,
+          "xyxy": [
+            219,
+            408,
+            349,
+            863
+          ]
+        },
+        {
+          "class_id": 0,
+          "name": "person",
+          "confidence": 0.815568,
+          "xyxy": [
+            52,
+            399,
+            207,
+            895
+          ]
+        },
+        {
+          "class_id": 0,
+          "name": "person",
+          "confidence": 0.675583,
+          "xyxy": [
+            681,
+            377,
+            810,
+            870
+          ]
+        },
+        {
+          "class_id": 5,
+          "name": "bus",
+          "confidence": 0.526095,
+          "xyxy": [
+            49,
+            237,
+            810,
+            772
+          ]
+        }
+      ],
+      "uploads": [
+        {
+          "event_id": "31ce944faa9b4316959346054a2b0b62",
+          "post_id": 5
+        }
+      ],
+      "held_presence_uploads": 0
+    },
+    {
+      "phase": "off",
+      "monitoring_enabled": false,
+      "actual_model_executed": false,
+      "detections": [],
+      "uploads": [],
+      "held_presence_uploads": 0,
+      "stale_client_registration_status": 423,
+      "cli_roi_override_cannot_bypass_remote_off": true
+    },
+    {
+      "phase": "on_resumed",
+      "monitoring_enabled": true,
+      "actual_model_executed": true,
+      "detections": [
+        {
+          "class_id": 0,
+          "name": "person",
+          "confidence": 0.822809,
+          "xyxy": [
+            219,
+            408,
+            349,
+            863
+          ]
+        },
+        {
+          "class_id": 0,
+          "name": "person",
+          "confidence": 0.815568,
+          "xyxy": [
+            52,
+            399,
+            207,
+            895
+          ]
+        },
+        {
+          "class_id": 0,
+          "name": "person",
+          "confidence": 0.675583,
+          "xyxy": [
+            681,
+            377,
+            810,
+            870
+          ]
+        },
+        {
+          "class_id": 5,
+          "name": "bus",
+          "confidence": 0.526095,
+          "xyxy": [
+            49,
+            237,
+            810,
+            772
+          ]
+        }
+      ],
+      "uploads": [
+        {
+          "event_id": "a83652b21691477e9b5cea7d7d1da68f",
+          "post_id": 6
+        }
+      ],
+      "held_presence_uploads": 0
+    }
+  ],
+  "new_post_ids": [
+    6,
+    5
+  ],
+  "original_settings_restored": {
+    "monitoring_enabled": true,
+    "zone_enabled": true
+  },
+  "input": "official public bus.jpg still image; no physical camera test"
+}

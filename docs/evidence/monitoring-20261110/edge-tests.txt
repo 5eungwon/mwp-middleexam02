@@ -1,0 +1,27 @@
+/Users/gimseung-won/mwp-middle02/mwp-middleexam02/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+test_disappearance_then_reappearance_uploads_again (test_changedetection.TransitionTests) ... ok
+test_expired_token_is_refreshed_once (test_changedetection.TransitionTests) ... ok
+test_failed_upload_is_retried_when_presence_is_held (test_changedetection.TransitionTests) ... Upload pending event=7ac6a91f3f4147ce9a7d8b50dd4c1182 (ConnectionError)
+ok
+test_instances_do_not_share_previous_state (test_changedetection.TransitionTests) ... ok
+test_mismatched_presence_vector_rejected (test_changedetection.TransitionTests) ... ok
+test_new_presence_uploads_once_and_held_presence_is_suppressed (test_changedetection.TransitionTests) ... ok
+test_non_monitored_class_does_not_upload (test_changedetection.TransitionTests) ... ok
+test_restart_can_flush_persisted_event_without_a_new_transition (test_changedetection.TransitionTests) ... Upload pending event=9a1a5703e9014abaa318f3b7bc4645bd (HTTPError)
+ok
+test_official_bus_image_detects_people_and_bus (test_inference.RealInferenceTests) ... ok
+test_bottom_center_and_disabled_full_frame (test_zones.ZoneTests) ... ok
+test_disabled_monitoring_excludes_all_objects_even_without_roi (test_zones.ZoneTests) ... ok
+test_enter_held_exit_reenter_sends_two_events (test_zones.ZoneTests) ... ok
+test_off_never_flushes_pending_and_on_detects_held_person_again (test_zones.ZoneTests) ... Upload pending event=03f91f5ebfc04f4790d97d6299fc2036 (HTTPError)
+ok
+test_reject_invalid_regions (test_zones.ZoneTests) ... ok
+test_server_pause_quarantines_rejected_event_instead_of_retrying_on_resume (test_zones.ZoneTests) ... ok
+test_unavailable_initial_server_settings_does_not_silently_disable_roi (test_zones.ZoneTests) ... Region settings unavailable (ConnectionError)
+ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.177s
+
+OK
