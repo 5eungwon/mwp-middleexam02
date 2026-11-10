@@ -1,0 +1,11 @@
+{
+  "updated_at": "2026-11-10",
+  "roi": "verified",
+  "push": "deferred_by_user",
+  "firebase_configured": false,
+  "summary": "감시 영역 설정 구현·클라우드·Android 실제 검증 완료. 푸시 발송·수신 코드는 준비했고 Firebase 연결·실제 수신 검증은 사용자 요청으로 보류.",
+  "test_summary": "Django 테스트 25개 및 엣지 테스트 13개 통과. Android 빌드·Lint 성공(오류 0개, Gradle 버전 안내 경고 1개). 실제 YOLO 영역 밖 0건/영역 안 1건 전송을 로컬·클라우드에서 확인했고 실제 Android 드래그·저장 결과를 API로 검증. FCM 테스트는 모의 통신이며 실제 Firebase 전달 성공을 뜻하지 않음.",
+  "cloud_deployment": "cloud-deployment.json",
+  "apk_sha256": "15ba95e67cef0fc602e9dfa1a39bc047bdc737e53cfe713640f7bace8f84f317",
+  "report_policy": "사용자가 수정 중인 기존 루트 Word 파일 보존. --feature-update 생성 모드는 새 영역 완료/푸시 보류 상태를 반영하며 잠금 파일이 있으면 기본 경로 덮어쓰기를 중단함."
+}

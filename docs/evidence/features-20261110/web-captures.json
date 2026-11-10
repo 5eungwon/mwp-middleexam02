@@ -1,0 +1,15 @@
+{
+  "captured_at_utc": "2026-11-10T07:45:59.345880+00:00",
+  "captures": [
+    {
+      "file": "web-zone.png",
+      "url": "https://asdfgh0986.pythonanywhere.com/settings/",
+      "status": 200
+    },
+    {
+      "file": "web-push-pending.png",
+      "url": "https://asdfgh0986.pythonanywhere.com/api/settings/",
+      "status": 200
+    }
+  ]
+}

@@ -1,5 +1,17 @@
 plugins { id 'com.android.application' }
 
+def configFile = file('google-services.json')
+def firebase = [:]
+if (configFile.exists()) {
+    def parsed = new groovy.json.JsonSlurper().parse(configFile)
+    def client = parsed.client.find { it.client_info.android_client_info.package_name == 'kr.ac.homeguard.photoviewer' }
+    if (client == null) throw new GradleException('google-services.json must contain Android package kr.ac.homeguard.photoviewer')
+    firebase = [project: parsed.project_info.project_id, sender: parsed.project_info.project_number,
+        app: client.client_info.mobilesdk_app_id, key: client.api_key[0].current_key]
+    if (firebase.values().any { !it }) throw new GradleException('Firebase configuration is incomplete')
+}
+def quoted = { value -> groovy.json.JsonOutput.toJson(value ?: '') }
+
 android {
     namespace 'kr.ac.homeguard.photoviewer'
     compileSdk 36
@@ -9,10 +21,18 @@ android {
         targetSdk 36
         versionCode 1
         versionName '1.0'
+        buildConfigField 'boolean', 'FCM_CONFIGURED', configFile.exists().toString()
+        buildConfigField 'String', 'FCM_PROJECT', quoted(firebase.project)
+        buildConfigField 'String', 'FCM_SENDER', quoted(firebase.sender)
+        buildConfigField 'String', 'FCM_APP', quoted(firebase.app)
+        buildConfigField 'String', 'FCM_API_KEY', quoted(firebase.key)
     }
+    buildFeatures { buildConfig true }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
     buildTypes { release { minifyEnabled false } }
 }
+
+dependencies { implementation 'com.google.firebase:firebase-messaging:24.1.1' }

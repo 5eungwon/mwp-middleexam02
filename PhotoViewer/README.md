@@ -1,6 +1,6 @@
 # PhotoViewer — Android Client
 
-Java 네이티브 앱입니다. 서버 설정, JWT 로그인, 사진 목록·상세 조회를 제공합니다. 추가 편의 기능은 서버와 공통으로 **검색/미확인 필터**와 **확인 완료 표시** 두 가지입니다. 비밀번호는 저장하지 않으며 로그인 토큰은 앱 전용 SharedPreferences에 저장합니다. 네트워크 요청과 이미지 디코딩은 작업 스레드에서 실행합니다.
+Java 네이티브 앱입니다. 서버 설정, JWT 로그인, 사진 목록·상세 조회를 제공합니다. 새 편의 기능은 **감시 영역 설정**과 **FCM 감지 알림**입니다. Firebase 연결과 실제 알림 수신은 사용자 요청으로 추후 진행하며 설정이 없으면 연결 대기를 표시합니다. 기존 검색·미확인·확인 처리는 유지합니다. 비밀번호는 저장하지 않으며 로그인 토큰은 앱 전용 SharedPreferences에 저장합니다. 네트워크 요청과 이미지 디코딩은 작업 스레드에서 실행합니다.
 
 ## 빌드
 
@@ -45,12 +45,18 @@ adb shell am start -n kr.ac.homeguard.photoviewer/.MainActivity
 
 ## API
 
+목록의 **감시 영역 · 알림 설정**을 열면 최근 감지 사진 위에서 영역을 드래그할 수 있습니다. 전체 이미지의 정규화 좌표(0~1)로 저장하며 사진 표시 여백을 좌표 계산에서 제외합니다. 저장 후 같은 계정의 YOLO가 다음 설정 조회 때 적용합니다.
+
+`app/google-services.json`이 있으면 Gradle이 공식 Firebase Android 설정을 읽어 BuildConfig를 구성합니다. 서비스 계정 비공개 키는 APK에 넣지 않습니다. 설정이 없는 빌드도 사진·영역 기능은 동작하고 알림 스위치는 비활성화됩니다. 연결 과정은 [Firebase 설정](../docs/FIREBASE_SETUP.md)을 참조하세요.
+
 | 동작 | 요청 |
 | --- | --- |
 | 로그인 | `POST /api-token-auth/` — `username`, `password` |
 | 목록 | `GET /api_root/Post/?search=...&unread=1` |
 | 상세 | `GET /api_root/Post/{id}/` |
 | 확인 완료 | `POST /api_root/Post/{id}/acknowledge/` |
+| 영역·알림 설정 | `GET/PATCH /api/settings/` |
+| 푸시 기기 등록·해제 | `POST /api/push/devices/`, `DELETE /api/push/devices/{installation_id}/` |
 
 인증 헤더: `Authorization: JWT <token>`. 목록은 JSON 배열을 받습니다. HTTP 401은 저장 토큰을 삭제하고 로그인 화면으로 이동합니다. 네트워크 실패는 화면에 오류와 재시도 방법을 표시합니다. 화면 회전 시 로그인 상태, 검색 조건, 열어 둔 상세 기록을 복원합니다.
 

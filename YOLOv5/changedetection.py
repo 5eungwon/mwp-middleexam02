@@ -47,7 +47,7 @@ class ChangeDetection:
         self.token = response.json()['token']
         # Tokens and passwords must never be included in logs.
 
-    def add(self, names, detected_current, save_dir, image):
+    def add(self, names, detected_current, save_dir, image, zone_name=''):
         current_names = list(names.values()) if isinstance(names, dict) else list(names)
         if current_names != self.names or len(detected_current) != len(self.names):
             raise ValueError('Class names and presence-vector length must remain stable')
@@ -58,11 +58,11 @@ class ChangeDetection:
         # Persist a transition before advancing state, so an image-write failure
         # does not silently consume the rising edge.
         if appeared:
-            self._enqueue(save_dir, image, appeared)
+            self._enqueue(save_dir, image, appeared, zone_name)
         self.result_prev = current
         return self.flush(save_dir)
 
-    def _enqueue(self, save_dir, image, appeared):
+    def _enqueue(self, save_dir, image, appeared, zone_name=''):
         now = datetime.now(timezone.utc)
         event_id = uuid.uuid4().hex
         directory = Path(save_dir) / 'outbox'
@@ -78,6 +78,7 @@ class ChangeDetection:
             'created_date': now.isoformat(),
             'published_date': now.isoformat(),
             'image_file': image_path.name,
+            'zone_name': zone_name,
         }
         target = directory / (event_id + '.json')
         temporary = target.with_suffix('.tmp')
@@ -121,6 +122,7 @@ class ChangeDetection:
 
     def _post(self, directory, event):
         data = {key: event[key] for key in ('title', 'text', 'created_date', 'published_date')}
+        data['zone_name'] = event.get('zone_name', '')
         with (directory / event['image_file']).open('rb') as photo:
             return self.session.post(
                 self.host + '/api_root/Post/', data=data,

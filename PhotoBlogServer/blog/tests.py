@@ -69,7 +69,7 @@ class ServerTests(TestCase):
     def test_multipart_upload_and_json_contract(self):
         response = self.api.post('/api_root/Post/', {'title': 'person', 'text': 'person, bicycle', 'image': photo(), 'author': self.other.pk, 'acknowledged': True}, format='multipart')
         self.assertEqual(response.status_code, 201, response.data)
-        self.assertEqual(set(response.data), {'id', 'title', 'text', 'image', 'created_date', 'published_date', 'author', 'acknowledged'})
+        self.assertEqual(set(response.data), {'id', 'title', 'text', 'image', 'created_date', 'published_date', 'author', 'acknowledged', 'zone_name'})
         self.assertEqual(response.data['author'], 'camera')
         self.assertFalse(response.data['acknowledged'])
         self.assertTrue(response.data['image'].startswith('http://testserver/media/detections/'))

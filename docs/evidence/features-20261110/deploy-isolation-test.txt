@@ -1,0 +1,1 @@
+PASS: isolated filesystem/SQLite test; migration changes cloned DB only; previous external DB and media backed up and unchanged. Remote subprocess commands mocked; this is not cloud deployment evidence.

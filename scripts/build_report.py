@@ -1,5 +1,6 @@
 """Fill the provided Word template and embed actual capture image bytes."""
 import json
+import argparse
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -12,8 +13,17 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
 E = ROOT / 'docs/evidence'
-OUTPUT = ROOT / '모바일웹서비스 프로젝트_공통평가 02_수행 결과 보고서.docx'
+parser = argparse.ArgumentParser()
+parser.add_argument('--output', type=Path)
+parser.add_argument('--feature-update', action='store_true', help='Use the verified ROI / deferred Firebase feature status')
+args = parser.parse_args()
+OUTPUT = args.output or ROOT / '모바일웹서비스 프로젝트_공통평가 02_수행 결과 보고서.docx'
+if args.output is None and list(ROOT.glob('~$*02*보고서.docx')):
+    raise SystemExit('보고서가 Word에서 열려 있는 것으로 보입니다. 저장 후 닫거나 --output으로 별도 파일을 지정하세요.')
 STATE = json.loads((E / 'submission-status.json').read_text()) if (E / 'submission-status.json').exists() else {}
+FEATURES = json.loads((E / 'features-20261110/status.json').read_text()) if args.feature_update else None
+if FEATURES:
+    STATE = dict(STATE, overall=FEATURES['summary'], test_summary=FEATURES['test_summary'])
 doc = Document(ROOT / 'docs/templates/report-template.docx')
 for p in doc.paragraphs:
     if p.text.strip() == '학번 :': p.text = '학번 : 2021105579'
@@ -93,6 +103,26 @@ feature_rows = [
  (13,'10-2','Server','확인 완료 처리','본인 게시물의 확인 상태 저장, 미확인 필터 및 웹 상태에 반영. 추가 편의 기능 2의 서버 구현.',['web-acknowledged.png'],STATE.get('acknowledge') == '완료'),
  (14,'10-2','Client','확인 완료 처리','Android 확인 완료 버튼이 서버에 상태를 저장하고 완료 상태를 표시. 추가 편의 기능 2의 Client 구현.',['android-acknowledged.png'],STATE.get('acknowledge') == '완료'),
 ]
+if FEATURES:
+    for name in ['web-search.png', 'web-unread.png', 'android-unread.png', 'android-search.png', 'android-acknowledged.png', 'web-acknowledged.png']:
+        FIGURES.pop(name, None)
+    prefix = 'features-20261110/'
+    FIGURES.update({
+        prefix+'web-zone.png': ('A10-1 · 감시 영역 서버 설정', '실제 클라우드 웹에서 같은 계정의 감시 영역과 알림 설정을 조회한 화면입니다.'),
+        prefix+'cloud-android/android-zone.png': ('A10-2 · Android 감시 영역 지정', '실제 Android 앱에서 사진 위를 드래그해 지정한 정규화 좌표를 클라우드 서버에 저장했습니다.'),
+        prefix+'cloud-roi/roi-outside.jpg': ('A10-3 · 실제 YOLO 영역 밖 판정', '같은 공식 예제 사진에서 지정 영역 밖의 사람은 기록을 생성하지 않았습니다. 실제 카메라 이동 장면을 촬영한 증빙은 아닙니다.'),
+        prefix+'cloud-roi/roi-inside.jpg': ('A10-4 · 실제 YOLO 영역 안 판정', '지정 영역 안의 사람을 실제 모델로 검출하고 사진 한 건을 클라우드에 등록했습니다.'),
+        prefix+'web-push-pending.png': ('A10-5 · 서버 Firebase 연결 대기', 'FCM 발송 코드는 준비되어 있으나 Firebase 프로젝트 연결과 실제 발송 검증은 사용자 요청으로 보류했습니다.'),
+        prefix+'cloud-android/android-push-pending.png': ('A10-6 · Android 푸시 연결 대기', '설정 파일이 없어 알림 스위치가 비활성화된 실제 화면입니다. 알림 수신 성공 증빙이 아닙니다.'),
+    })
+    roi_ok = FEATURES['roi'] == 'verified'
+    push_ok = FEATURES['push'] == 'verified'
+    feature_rows = [
+        (11,'10-1','Server / Edge','감시 영역 설정','사용자별 영역 저장과 YOLO의 영역 진입 0→1 판정. 실제 정지 이미지로 영역 밖 0건/영역 안 1건 전송 검증.',[prefix+'web-zone.png',prefix+'cloud-roi/roi-inside.jpg'],roi_ok),
+        (12,'10-1','Client','감시 영역 설정','사진 위에서 드래그하고 저장한 좌표가 클라우드 서버에 반영되는 것을 실제 Android에서 확인.',[prefix+'cloud-android/android-zone.png'],roi_ok),
+        (13,'10-2','Server','감지 푸시 알림','FCM 발송 작업 저장·실패 처리 및 모의 통신 테스트 준비. Firebase 프로젝트 연결과 실제 전송은 보류.',[prefix+'web-push-pending.png'],push_ok),
+        (14,'10-2','Client','감지 푸시 알림','알림 권한·FCM 기기 등록·알림 클릭 상세 이동 코드 준비. 실제 Firebase 수신은 보류.',[prefix+'cloud-android/android-push-pending.png'],push_ok),
+    ]
 for index, ident, category, name, description, files, ok in feature_rows:
     cells=table.rows[index].cells
     for cell,value in zip(cells[:4],[ident,category,name,description]): cell.text=value
@@ -126,7 +156,7 @@ doc.add_heading('재현 방법 및 참고',level=1)
 doc.add_paragraph('설치·실행·테스트는 루트 및 각 프로젝트의 README.md를 참조합니다. 원본 소스 기본 실행 명령은 YOLOv5/evidence/baseline-command.txt, 해시 검증은 baseline-run.json, 수정 검출기 결과는 docs/evidence/edge-integration.json, Android 실행 기록은 android-runtime.json에 있습니다.')
 doc.add_paragraph('증빙 재생성: scripts/capture_web.py, scripts/capture_android.py, scripts/verify_integration.py, scripts/build_report.py. 계정은 외부 비밀 파일로 전달하며 비밀번호/JWT를 Git이나 보고서에 넣지 않습니다.')
 doc.add_paragraph('PythonAnywhere 배포·백업·복구는 docs/PYTHONANYWHERE.md를 참조합니다. 실제 배포 결과는 cloud-deployment.json, YOLO 전송은 cloud-edge-integration.json, 실제 HTTPS 기능 검증은 cloud-integration.json, 모바일 클라우드 검증은 android-cloud-runtime.json에 있습니다.')
-doc.add_paragraph('기준 강의: ch08. Django와 YOLO를 이용한 침입자 감시 시스템_v1.8.pdf 3·6·8–13쪽. 원본 모델·이미지 출처와 라이선스는 YOLOv5/README.md 및 ASSETS.md, 원본 소스는 upstream-source.json에 있습니다.')
+doc.add_paragraph('기준 강의: ch08. Django와 YOLO를 이용한 침입자 감시 시스템_v1.8.pdf 3·6·8–13쪽. 원본 모델·이미지 출처와 라이선스는 YOLOv5/README.md 및 download_assets.py, 원본 소스는 upstream-source.json에 있습니다.')
 doc.add_paragraph('공식 배포 문서: https://help.pythonanywhere.com/pages/DeployExistingDjangoProject/')
 doc.save(OUTPUT)
 print(OUTPUT)

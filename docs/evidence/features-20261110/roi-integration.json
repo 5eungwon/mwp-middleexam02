@@ -1,0 +1,50 @@
+{
+  "captured_at_utc": "2026-11-10T07:33:31.525949+00:00",
+  "base_url": "http://127.0.0.1:8001",
+  "engine": "actual official YOLOv5n ONNX inference",
+  "cases": [
+    {
+      "case": "outside",
+      "zone": {
+        "left": 0,
+        "top": 0,
+        "right": 1,
+        "bottom": 0.2,
+        "zone_enabled": true,
+        "zone_name": "현관"
+      },
+      "eligible_count": 0,
+      "uploaded_count": 0,
+      "post_ids": []
+    },
+    {
+      "case": "inside",
+      "zone": {
+        "left": 0.25,
+        "top": 0.2,
+        "right": 0.5,
+        "bottom": 0.85,
+        "zone_enabled": true,
+        "zone_name": "현관"
+      },
+      "eligible_count": 1,
+      "uploaded_count": 1,
+      "post_ids": [
+        4
+      ]
+    }
+  ],
+  "new_post": {
+    "id": 4,
+    "title": "person",
+    "text": "새 객체 출현: person\nEdge event: 4c36b6ba10ba4c53a984991483c37902",
+    "image": "http://127.0.0.1:8001/media/detections/2026/11/10/a56fc740faaf4d80b6e420af89027f43.jpg",
+    "created_date": "2026-11-10T16:33:31.449009+09:00",
+    "published_date": "2026-11-10T16:33:31.449009+09:00",
+    "author": "guardian",
+    "acknowledged": false,
+    "zone_name": "현관"
+  },
+  "push": "Firebase not configured; no real push delivery claimed",
+  "result": "PASS"
+}

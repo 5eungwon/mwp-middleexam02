@@ -1,5 +1,25 @@
 # PythonAnywhere 배포
 
+## 2026년 11월 10일 현재 환경
+
+감시 영역 API·웹 설정과 푸시 준비 코드를 2026-11-10T16:34:59.475652+09:00에 재배포했습니다. **감시 영역 기능은 실제 클라우드 YOLO 전송 및 Android 저장으로 검증했고, Firebase 연결·실제 알림 수신은 사용자 요청으로 보류했습니다.**
+
+| 항목 | 현재 경로 |
+|---|---|
+| 소스 | `/home/asdfgh0986/home-guardian-assessment02/releases/20261110-073148/PhotoBlogServer` |
+| 가상환경 | `/home/asdfgh0986/.virtualenvs/home-guardian-assessment02-20261110-073148` |
+| DB | `/home/asdfgh0986/home-guardian-assessment02/data/20261110-073148/db.sqlite3` |
+| 미디어 | `/home/asdfgh0986/home-guardian-assessment02/data/20261110-073148/media` |
+| 직전 환경 백업 | `/home/asdfgh0986/photoblog-backups/before-assessment02-20261110-073148` |
+
+재배포 도구는 기존 WSGI에서 실제 외부 DB·미디어 위치를 읽어 백업하고, DB·사진을 새 릴리스 데이터 폴더에 복제한 뒤 새 가상환경에서 마이그레이션합니다. 기존 사용자 계정은 비밀번호를 재설정하지 않고 보존합니다. SQLite 백업 무결성은 `ok`였습니다.
+
+이번 버전에서 직전 과제02 환경으로 되돌리려면 백업의 `previous-wsgi.py`를 `/var/www/asdfgh0986_pythonanywhere_com_wsgi.py`에 복원하고, 백업의 `previous-web-settings.json`과 `previous-static-mappings.json`대로 Web 설정을 되돌린 후 Reload합니다. 직전 소스는 `releases/20261106-083539/PhotoBlogServer`, 가상환경은 `~/.virtualenvs/home-guardian-assessment02`, 데이터는 `~/home-guardian-assessment02/data/`이며 그대로 보존했습니다.
+
+최신 증빙은 `docs/evidence/features-20261110/`에 있습니다. 다음 절의 11월6일 경로는 최초 배포 당시 기록이며 현재 경로와 구분합니다.
+
+## 2026년 11월 6일 최초 배포 기록
+
 대상 주소: https://asdfgh0986.pythonanywhere.com
 
 과제 02 서버를 **2026년 11월 6일 17:38:14(한국 시간)**에 실제 배포했습니다. HTTPS 상태 API 200, 익명 API 접근 거부 401, JWT 로그인 200을 확인했습니다. 기존 DB 백업의 `PRAGMA integrity_check` 결과는 `ok`이며, 기존 프로젝트 파일과 DB는 원래 위치에 보존했습니다.
@@ -10,7 +30,7 @@
 - 실제 YOLO → 클라우드 검증: `docs/evidence/cloud-edge-integration.json`
 - 실제 클라우드 HTTP 검증: `docs/evidence/cloud-integration.json`
 
-## 현재 운영 경로와 복구
+## 최초 배포 당시 운영 경로와 과제01 복구
 
 | 항목 | 실제 배포 경로 |
 |---|---|

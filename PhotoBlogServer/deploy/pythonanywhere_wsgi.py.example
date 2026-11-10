@@ -17,6 +17,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'photoblog.settings'
 os.environ['DJANGO_DEBUG'] = '0'
 os.environ['DJANGO_SECRET_KEY'] = config['secret_key']
 os.environ['DJANGO_ALLOWED_HOSTS'] = config['allowed_hosts']
+os.environ['FCM_SERVICE_ACCOUNT_FILE'] = config.get('fcm_service_account_file', '')
 
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()

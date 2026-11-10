@@ -1,0 +1,62 @@
+Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Found 25 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, rest_framework, staticfiles
+  Apply all migrations: admin, auth, blog, contenttypes, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying blog.0001_initial... OK
+  Applying blog.0002_post_zone_name_detectionsettings_pushdevice_and_more... OK
+  Applying sessions.0001_initial...test_another_user_cannot_unregister_or_claim_an_unknown_device_token (blog.test_features.DetectionFeatureTests.test_another_user_cannot_unregister_or_claim_an_unknown_device_token) ... ok
+test_device_binding_is_registered_without_exposing_token (blog.test_features.DetectionFeatureTests.test_device_binding_is_registered_without_exposing_token) ... ok
+test_disabled_notifications_are_not_sent (blog.test_features.DetectionFeatureTests.test_disabled_notifications_are_not_sent) ... ok
+test_fcm_payload_targets_current_binding_and_success_is_not_resent (blog.test_features.DetectionFeatureTests.test_fcm_payload_targets_current_binding_and_success_is_not_resent) ... ok
+test_invalid_login_json_array_returns_400 (blog.test_features.DetectionFeatureTests.test_invalid_login_json_array_returns_400) ... ok
+test_missing_firebase_config_is_recorded_instead_of_fake_success (blog.test_features.DetectionFeatureTests.test_missing_firebase_config_is_recorded_instead_of_fake_success) ... ok
+test_provider_failure_preserves_post_and_retry_state (blog.test_features.DetectionFeatureTests.test_provider_failure_preserves_post_and_retry_state) ... Push delivery failed id=1 type=ValueError
+ok
+test_region_persists_and_is_private_to_each_account (blog.test_features.DetectionFeatureTests.test_region_persists_and_is_private_to_each_account) ... ok
+test_region_rejects_inverted_tiny_nonfinite_and_out_of_range (blog.test_features.DetectionFeatureTests.test_region_rejects_inverted_tiny_nonfinite_and_out_of_range) ... ok
+test_settings_requires_auth_and_defaults_to_full_frame (blog.test_features.DetectionFeatureTests.test_settings_requires_auth_and_defaults_to_full_frame) ... ok
+test_settings_web_requires_login_and_renders_configuration_state (blog.test_features.DetectionFeatureTests.test_settings_web_requires_login_and_renders_configuration_state) ... ok
+test_acknowledge_is_idempotent (blog.tests.ServerTests.test_acknowledge_is_idempotent) ... ok
+test_another_user_cannot_list_read_edit_delete_or_acknowledge (blog.tests.ServerTests.test_another_user_cannot_list_read_edit_delete_or_acknowledge) ... ok
+test_api_login_rate_limit (blog.tests.ServerTests.test_api_login_rate_limit) ... ok
+test_api_requires_authentication (blog.tests.ServerTests.test_api_requires_authentication) ... ok
+test_bearer_header_accepted (blog.tests.ServerTests.test_bearer_header_accepted) ... ok
+test_expired_and_tampered_jwt_rejected (blog.tests.ServerTests.test_expired_and_tampered_jwt_rejected) ... ok
+test_health_has_no_private_data (blog.tests.ServerTests.test_health_has_no_private_data) ... ok
+test_inactive_user_token_is_rejected (blog.tests.ServerTests.test_inactive_user_token_is_rejected) ... ok
+test_invalid_missing_and_oversize_images_rejected (blog.tests.ServerTests.test_invalid_missing_and_oversize_images_rejected) ... ok
+test_login_returns_jwt_and_invalid_password_is_rejected (blog.tests.ServerTests.test_login_returns_jwt_and_invalid_password_is_rejected) ... ok
+test_multipart_upload_and_json_contract (blog.tests.ServerTests.test_multipart_upload_and_json_contract) ... ok
+test_search_and_unread_filters (blog.tests.ServerTests.test_search_and_unread_filters) ... ok
+test_web_login_feed_detail_and_acknowledge (blog.tests.ServerTests.test_web_login_feed_detail_and_acknowledge) ... ok
+test_web_upload_requires_csrf (blog.tests.ServerTests.test_web_upload_requires_csrf) ... ok
+
+----------------------------------------------------------------------
+Ran 25 tests in 2.405s
+
+OK
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+ OK
+System check identified no issues (0 silenced).

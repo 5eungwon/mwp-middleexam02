@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
-from django.db import connection
+from django.db import connection, transaction
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -14,8 +14,9 @@ from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 from .authentication import create_token
 from .forms import PostForm
-from .models import Post
-from .serializers import PostSerializer
+from .models import Post, DetectionSettings, PushDevice
+from .serializers import PostSerializer, DetectionSettingsSerializer, PushDeviceSerializer
+from .push import enqueue_post, transport_status
 
 class LoginThrottle(AnonRateThrottle):
     scope = 'login'
@@ -25,6 +26,8 @@ class LoginThrottle(AnonRateThrottle):
 @permission_classes([AllowAny])
 @throttle_classes([LoginThrottle])
 def obtain_token(request):
+    if not isinstance(request.data, dict):
+        return Response({'detail': '아이디와 비밀번호를 객체로 전송해주세요.'}, status=400)
     user = authenticate(request, username=request.data.get('username', ''), password=request.data.get('password', ''))
     if not user:
         return Response({'detail': '아이디 또는 비밀번호를 확인해주세요.'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -46,7 +49,8 @@ class PostViewSet(viewsets.ModelViewSet):
         return filter_posts(Post.objects.filter(author=self.request.user).select_related('author'), self.request.query_params)
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        post = serializer.save(author=self.request.user)
+        transaction.on_commit(lambda: enqueue_post(post.pk))
 
     @action(detail=True, methods=['post'])
     def acknowledge(self, request, pk=None):
@@ -95,6 +99,54 @@ def upload(request):
         post = form.save(commit=False)
         post.author = request.user
         post.save()
+        transaction.on_commit(lambda: enqueue_post(post.pk))
         messages.success(request, '사진이 등록되었습니다.')
         return redirect('detail', pk=post.pk)
     return render(request, 'blog/upload.html', {'form': form})
+
+
+@api_view(['GET', 'PATCH'])
+def detection_settings(request):
+    prefs, _ = DetectionSettings.objects.get_or_create(owner=request.user)
+    kwargs = {'partial': True, 'context': {'request': request}}
+    if request.method == 'PATCH':
+        kwargs['data'] = request.data
+    serializer = DetectionSettingsSerializer(prefs, **kwargs)
+    if request.method == 'PATCH':
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+    data = dict(serializer.data)
+    data['push'] = transport_status(request.user)
+    return Response(data)
+
+
+@api_view(['POST'])
+def register_push_device(request):
+    serializer = PushDeviceSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    values = serializer.validated_data
+    device = PushDevice.objects.filter(installation_id=values['installation_id']).first()
+    if device and device.owner_id != request.user.pk and device.token != values['token']:
+        return Response({'detail': '다른 계정에 연결된 기기입니다.'}, status=403)
+    token_device = PushDevice.objects.filter(token=values['token']).first()
+    if token_device and token_device.installation_id != values['installation_id']:
+        return Response({'detail': '기기 등록 정보를 새로 확인해주세요.'}, status=409)
+    if not device and PushDevice.objects.filter(owner=request.user, active=True).count() >= 10:
+        return Response({'detail': '등록 가능한 기기 수를 초과했습니다.'}, status=400)
+    PushDevice.objects.update_or_create(installation_id=values['installation_id'],
+        defaults={**values, 'owner': request.user, 'active': True})
+    return Response({'registered': True, 'push': transport_status(request.user)}, status=200)
+
+
+@api_view(['DELETE'])
+def unregister_push_device(request, installation_id):
+    PushDevice.objects.filter(owner=request.user, installation_id=installation_id).delete()
+    return Response(status=204)
+
+
+@login_required
+def settings_page(request):
+    prefs, _ = DetectionSettings.objects.get_or_create(owner=request.user)
+    preview = Post.objects.filter(author=request.user).first()
+    values = {key: getattr(prefs, key) for key in ['zone_enabled', 'zone_name', 'left', 'top', 'right', 'bottom', 'notifications_enabled']}
+    return render(request, 'blog/settings.html', {'prefs': prefs, 'preview': preview, 'zone_values': values, 'push': transport_status(request.user)})

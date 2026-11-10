@@ -7,6 +7,7 @@ application credentials are never written into the repository or terminal log.
 The old application files, SQLite database and WSGI configuration are preserved.
 """
 import argparse
+import ast
 import io
 import json
 import os
@@ -32,13 +33,17 @@ class DeploymentError(RuntimeError):
 
 def archive_source():
     output = io.BytesIO()
-    excluded = {'media', 'staticfiles', '__pycache__', '.git', '.venv', 'venv'}
+    excluded = {'media', 'staticfiles', '__pycache__', '.git', '.venv', 'venv', '.credentials'}
     with tarfile.open(fileobj=output, mode='w:gz') as archive:
         for path in sorted((ROOT / 'PhotoBlogServer').rglob('*')):
             relative = path.relative_to(ROOT)
             if not path.is_file() or any(part in excluded for part in relative.parts):
                 continue
             if path.name in {'.local_secret_key', 'db.sqlite3', '.env', '.coverage'}:
+                continue
+            if path.name.startswith('.env.') and path.name != '.env.example':
+                continue
+            if path.name == 'google-services.json' or ('service-account' in path.name and path.suffix == '.json'):
                 continue
             if path.name.endswith(('.pyc', '.sqlite3', '.sqlite3-wal', '.sqlite3-shm')):
                 continue
@@ -60,7 +65,7 @@ try:
     previous_source = pathlib.Path(C['previous_source'])
     if previous_source.exists():
         shutil.copytree(previous_source, backup / 'previous-project', ignore=shutil.ignore_patterns('__pycache__', 'venv', '.venv', 'staticfiles'))
-    old_db = previous_source / 'db.sqlite3'
+    old_db = pathlib.Path(C['previous_db_path'])
     integrity = 'not-present-at-source-directory'
     if old_db.is_file():
         with sqlite3.connect('file:' + str(old_db) + '?mode=ro', uri=True) as source:
@@ -69,6 +74,9 @@ try:
                 integrity = target.execute('PRAGMA integrity_check').fetchone()[0]
         if integrity != 'ok':
             raise RuntimeError('Previous database backup integrity check failed')
+    previous_media = pathlib.Path(C['previous_media_path'])
+    if previous_media.is_dir():
+        shutil.copytree(previous_media, backup / 'previous-media')
     release = pathlib.Path(C['release'])
     release.mkdir(parents=True, exist_ok=False)
     with tarfile.open(C['archive'], 'r:gz') as source:
@@ -76,12 +84,17 @@ try:
     data = pathlib.Path(C['data'])
     data.mkdir(parents=True, exist_ok=True)
     (data / 'media').mkdir(exist_ok=True)
+    if (backup / 'previous-database.sqlite3').is_file():
+        shutil.copy2(backup / 'previous-database.sqlite3', data / 'db.sqlite3')
+    if (backup / 'previous-media').is_dir():
+        shutil.copytree(backup / 'previous-media', data / 'media', dirs_exist_ok=True)
     config_path = pathlib.Path(C['config_path'])
     config_path.parent.mkdir(parents=True, exist_ok=True)
     incoming = json.loads(pathlib.Path(C['incoming_config']).read_text())
     if config_path.exists():
         existing = json.loads(config_path.read_text())
         incoming['secret_key'] = existing['secret_key']
+        incoming['fcm_service_account_file'] = existing.get('fcm_service_account_file', '')
     config_path.write_text(json.dumps(incoming))
     os.chmod(config_path, 0o600)
     credentials_path = pathlib.Path(C['credentials_path'])
@@ -94,11 +107,16 @@ try:
     project = release / 'PhotoBlogServer'
     subprocess.run([python, '-m', 'pip', 'install', '-r', str(project / 'requirements.txt')], check=True)
     env = os.environ.copy()
-    env.update(DJANGO_DEBUG='0', DJANGO_SECRET_KEY=incoming['secret_key'], DJANGO_ALLOWED_HOSTS=incoming['allowed_hosts'], DJANGO_DB_PATH=str(data / 'db.sqlite3'), DJANGO_MEDIA_ROOT=str(data / 'media'))
+    env.update(DJANGO_DEBUG='0', DJANGO_SECRET_KEY=incoming['secret_key'], DJANGO_ALLOWED_HOSTS=incoming['allowed_hosts'], DJANGO_DB_PATH=str(data / 'db.sqlite3'), DJANGO_MEDIA_ROOT=str(data / 'media'), FCM_SERVICE_ACCOUNT_FILE=incoming.get('fcm_service_account_file', ''))
     credentials = json.loads(credentials_path.read_text())
     env['DEMO_PASSWORD'] = credentials['password']
+    env['DEMO_USERNAME'] = credentials['username']
     subprocess.run([python, 'manage.py', 'migrate', '--noinput'], cwd=project, env=env, check=True)
-    subprocess.run([python, 'manage.py', 'seed_demo', '--username', credentials['username'], '--superuser'], cwd=project, env=env, check=True)
+    exists = subprocess.run([python, 'manage.py', 'shell', '-c', "import os; from django.contrib.auth import get_user_model; raise SystemExit(0 if get_user_model().objects.filter(username=os.environ['DEMO_USERNAME']).exists() else 3)"], cwd=project, env=env, stdout=subprocess.DEVNULL)
+    if exists.returncode == 3:
+        subprocess.run([python, 'manage.py', 'seed_demo', '--username', credentials['username'], '--superuser'], cwd=project, env=env, check=True)
+    elif exists.returncode != 0:
+        raise RuntimeError('Existing account check failed')
     subprocess.run([python, 'manage.py', 'collectstatic', '--noinput'], cwd=project, env=env, check=True)
     subprocess.run([python, 'manage.py', 'check', '--deploy'], cwd=project, env=env, check=True)
     result.write_text(json.dumps({'status': 'ready', 'database_backup_integrity': integrity, 'backup': str(backup), 'release': str(release), 'virtualenv': str(environment)}))
@@ -120,6 +138,7 @@ def main():
     activation.add_argument('--console-id', type=int, help='An existing idle Bash console opened in PythonAnywhere')
     activation.add_argument('--wsgi-bootstrap', action='store_true', help='Start preparation from a one-time WSGI wrapper while the previous app stays available')
     parser.add_argument('--credentials-file', type=Path, help='Private local JSON with username/password; generated outside repo if omitted')
+    parser.add_argument('--evidence-output', type=Path, default=ROOT / 'docs/evidence/cloud-deployment.json')
     args = parser.parse_args()
     token = os.environ.get('PYTHONANYWHERE_API_TOKEN') or os.environ.get('API_TOKEN')
     if not token:
@@ -168,6 +187,14 @@ def main():
     backup = home + '/photoblog-backups/before-assessment02-' + stamp
     wsgi = f'/var/www/{username}_pythonanywhere_com_wsgi.py'
     previous_wsgi = get_file(wsgi)
+    previous_source = previous.get('source_directory') or home + '/photoblog-server-v2/PhotoBlogServer'
+    previous_paths = {'DJANGO_DB_PATH': previous_source + '/db.sqlite3', 'DJANGO_MEDIA_ROOT': previous_source + '/media'}
+    for node in ast.walk(ast.parse(previous_wsgi.decode())):
+        if not isinstance(node, ast.Assign) or not isinstance(node.value, ast.Constant) or not isinstance(node.value.value, str):
+            continue
+        for target in node.targets:
+            if isinstance(target, ast.Subscript) and isinstance(target.value, ast.Attribute) and isinstance(target.value.value, ast.Name) and target.value.value.id == 'os' and target.value.attr == 'environ' and isinstance(target.slice, ast.Constant) and target.slice.value in previous_paths:
+                previous_paths[target.slice.value] = node.value.value
     credentials_file = args.credentials_file
     if credentials_file:
         credentials_file = credentials_file.resolve()
@@ -186,14 +213,16 @@ def main():
     configuration = {'secret_key': secrets.token_urlsafe(64), 'allowed_hosts': domain}
     prepare = {
         'home': home, 'backup': backup, 'wsgi': wsgi, 'original_wsgi': staging + '/previous-wsgi.py',
-        'previous_source': previous.get('source_directory') or home + '/photoblog-server-v2/PhotoBlogServer',
+        'previous_source': previous_source,
+        'previous_db_path': previous_paths['DJANGO_DB_PATH'],
+        'previous_media_path': previous_paths['DJANGO_MEDIA_ROOT'],
         'release': release, 'archive': staging + '/source.tar.gz',
-        'data': application_root + '/data',
+        'data': application_root + '/data/' + stamp,
         'config_path': home + '/.config/home-guardian-assessment02.json',
         'credentials_path': home + '/.config/home-guardian-assessment02-admin.json',
         'incoming_config': staging + '/incoming-config.json',
         'incoming_credentials': staging + '/incoming-credentials.json',
-        'virtualenv': home + '/.virtualenvs/home-guardian-assessment02',
+        'virtualenv': home + '/.virtualenvs/home-guardian-assessment02-' + stamp,
         'result': staging + '/prepare-result.json',
     }
     put_file(prepare['archive'], archive_source())
@@ -263,6 +292,7 @@ os.environ['DJANGO_SECRET_KEY'] = config['secret_key']
 os.environ['DJANGO_ALLOWED_HOSTS'] = config['allowed_hosts']
 os.environ['DJANGO_DB_PATH'] = {prepare['data'] + '/db.sqlite3'!r}
 os.environ['DJANGO_MEDIA_ROOT'] = {prepare['data'] + '/media'!r}
+os.environ['FCM_SERVICE_ACCOUNT_FILE'] = config.get('fcm_service_account_file', '')
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
 '''
@@ -302,7 +332,7 @@ application = get_wsgi_application()
             raise DeploymentError('New application account login failed')
         checks.append({'check': 'JWT login', 'status': login.status_code, 'token': '[redacted]'})
         summary = {'server': 'https://' + domain, 'deployed_at': datetime.now(timezone(timedelta(hours=9))).isoformat(), 'source_directory': project, 'virtualenv': prepare['virtualenv'], 'data_directory': prepare['data'], 'backup': backup, 'database_backup_integrity': ready['database_backup_integrity'], 'original_files_preserved': True, 'checks': checks, 'api_documentation': API_DOC}
-        evidence = ROOT / 'docs/evidence/cloud-deployment.json'
+        evidence = args.evidence_output
         evidence.parent.mkdir(parents=True, exist_ok=True)
         evidence.write_text(json.dumps(summary, ensure_ascii=False, indent=2))
         print(json.dumps(summary, ensure_ascii=False, indent=2))

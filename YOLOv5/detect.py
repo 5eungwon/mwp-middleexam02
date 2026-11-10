@@ -14,6 +14,8 @@ import numpy as np
 
 from changedetection import ChangeDetection
 from coco import NAMES
+from zones import RemoteZone, validate_zone, eligible_detections, draw_zone
+from urllib.parse import urlsplit, urlunsplit
 
 ROOT = Path(__file__).resolve().parent
 
@@ -95,11 +97,21 @@ def arguments():
     parser.add_argument('--output', type=Path, default=ROOT / 'runs/detect')
     parser.add_argument('--max-frames', type=int, default=0, help='0 means no frame limit')
     parser.add_argument('--no-upload', action='store_true', help='Only local inference; no server requests')
+    parser.add_argument('--zone', type=float, nargs=4, metavar=('LEFT', 'TOP', 'RIGHT', 'BOTTOM'), help='Override server ROI with normalized 0~1 coordinates')
+    parser.add_argument('--zone-name', default='현관')
+    parser.add_argument('--settings-refresh', type=float, default=5, help='Seconds between authenticated server ROI updates')
     args = parser.parse_args()
     if not 0 < args.conf_thres <= 1 or not 0 < args.iou_thres <= 1:
         parser.error('Thresholds must be greater than 0 and at most 1')
     if args.max_frames < 0:
         parser.error('--max-frames must be at least 0')
+    if not 1 <= args.settings_refresh <= 300:
+        parser.error('--settings-refresh must be between 1 and 300 seconds')
+    if args.zone:
+        try:
+            validate_zone(dict(zip(['left', 'top', 'right', 'bottom'], args.zone)))
+        except ValueError as error:
+            parser.error(str(error))
     if args.classes == ['all']:
         args.classes = list(NAMES)
     if set(args.classes).difference(NAMES):
@@ -119,6 +131,8 @@ def main():
     outbox = args.output / ('delivery-' + account)
     if not args.no_upload:
         detector = ChangeDetection(NAMES, args.host, args.username, monitored=args.classes)
+    remote_zone = RemoteZone(detector, outbox, args.settings_refresh) if detector and not args.zone else None
+    zone = validate_zone(dict(zip(['left', 'top', 'right', 'bottom'], args.zone or [0, 0, 1, 1]), zone_enabled=bool(args.zone), zone_name=args.zone_name))
     image_extensions = {'.jpg', '.jpeg', '.png', '.bmp', '.webp'}
     is_image = Path(args.source).suffix.lower() in image_extensions and Path(args.source).is_file()
     capture = None
@@ -142,15 +156,19 @@ def main():
             tick = time.perf_counter()
             detections = model.infer(image)
             elapsed = round((time.perf_counter() - tick) * 1000, 2)
-            annotated = annotate(image, detections, set(args.classes))
+            if remote_zone:
+                zone = remote_zone.get()
+            accepted = eligible_detections(detections, image.shape, zone)
+            detection_image = annotate(image, detections, set(args.classes))
+            annotated = draw_zone(detection_image, zone)
             cv2.imwrite(str(args.output / 'latest.jpg'), annotated)
             presence = [0] * len(NAMES)
-            for detection in detections:
+            for detection in accepted:
                 presence[detection['class_id']] = 1
-            uploaded = detector.add(NAMES, presence, outbox, annotated) if detector else []
+            uploaded = detector.add(NAMES, presence, outbox, detection_image, zone_name=zone['zone_name'] if zone['zone_enabled'] else '') if detector else []
             processed += 1
             record = {'frame': processed, 'inference_ms': elapsed,
-                      'detections': detections, 'uploaded': uploaded}
+                      'detections': detections, 'eligible_detections': accepted, 'zone': dict(zone), 'uploaded': uploaded}
             records.append(record)
             # Keep a bounded in-memory report for long running camera streams.
             if len(records) > 1000:
@@ -164,9 +182,11 @@ def main():
         if capture is not None:
             capture.release()
     pending = len(list((outbox / 'outbox').glob('*.json'))) if detector else 0
+    parsed_source = urlsplit(args.source)
+    safe_source = urlunsplit((parsed_source.scheme, parsed_source.hostname or '', parsed_source.path, '', '')) if parsed_source.scheme.lower() in ('rtsp', 'rtsps', 'http', 'https') else args.source
     report = {
         'started_at': started, 'engine': 'OpenCV DNN / official YOLOv5n v7.0 ONNX',
-        'source': args.source, 'weights_sha256': hashlib.sha256(args.weights.read_bytes()).hexdigest(),
+        'source': safe_source, 'weights_sha256': hashlib.sha256(args.weights.read_bytes()).hexdigest(),
         'confidence_threshold': args.conf_thres, 'iou_threshold': args.iou_thres,
         'monitored_classes': args.classes, 'upload_enabled': detector is not None,
         'pending_uploads': pending, 'processed_frames': processed, 'frames': records,
@@ -174,7 +194,7 @@ def main():
     (args.output / 'results.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
     print(json.dumps({'processed_frames': processed, 'pending_uploads': pending,
                       'results': str(args.output / 'results.json')}, ensure_ascii=False))
-    return 2 if pending else 0
+    return 2 if pending or processed == 0 else 0
 
 
 if __name__ == '__main__':

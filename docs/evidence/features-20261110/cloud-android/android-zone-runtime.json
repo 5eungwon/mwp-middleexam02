@@ -1,0 +1,31 @@
+{
+  "result": "PASS",
+  "app_url": "https://asdfgh0986.pythonanywhere.com",
+  "verified": [
+    "native_login",
+    "draw_region_on_actual_photo",
+    "save_to_authenticated_server",
+    "server_coordinates_match_drag",
+    "firebase_pending_state_visible"
+  ],
+  "saved_settings": {
+    "zone_enabled": true,
+    "zone_name": "현관",
+    "left": 0.17987804114818573,
+    "top": 0.17987805604934692,
+    "right": 0.5800304412841797,
+    "bottom": 0.8993902206420898,
+    "notifications_enabled": true,
+    "updated_at": "2026-11-10T16:40:30.944361+09:00",
+    "preview_image": "https://asdfgh0986.pythonanywhere.com/media/detections/2026/11/10/19bf2c37488b43c493c1f7c87d38088c.jpg",
+    "push": {
+      "configured": false,
+      "enabled": true,
+      "registered_devices": 0
+    }
+  },
+  "apk_sha256": "15ba95e67cef0fc602e9dfa1a39bc047bdc737e53cfe713640f7bace8f84f317",
+  "push_delivery": "deferred by user; Firebase project not created; no delivery claimed",
+  "installed_apk_sha256": "15ba95e67cef0fc602e9dfa1a39bc047bdc737e53cfe713640f7bace8f84f317",
+  "installed_apk_matches_build": true
+}

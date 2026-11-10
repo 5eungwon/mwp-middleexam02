@@ -1,0 +1,31 @@
+{
+  "result": "PASS",
+  "app_url": "http://10.0.2.2:8001",
+  "verified": [
+    "native_login",
+    "draw_region_on_actual_photo",
+    "save_to_authenticated_server",
+    "server_coordinates_match_drag",
+    "firebase_pending_state_visible"
+  ],
+  "saved_settings": {
+    "zone_enabled": true,
+    "zone_name": "현관",
+    "left": 0.17987804114818573,
+    "top": 0.17987805604934692,
+    "right": 0.5800304412841797,
+    "bottom": 0.8993902206420898,
+    "notifications_enabled": true,
+    "updated_at": "2026-11-10T16:35:57.226294+09:00",
+    "preview_image": "http://127.0.0.1:8001/media/detections/2026/11/10/a56fc740faaf4d80b6e420af89027f43.jpg",
+    "push": {
+      "configured": false,
+      "enabled": true,
+      "registered_devices": 0
+    }
+  },
+  "apk_sha256": "15ba95e67cef0fc602e9dfa1a39bc047bdc737e53cfe713640f7bace8f84f317",
+  "push_delivery": "deferred by user; Firebase project not created; no delivery claimed",
+  "installed_apk_sha256": "15ba95e67cef0fc602e9dfa1a39bc047bdc737e53cfe713640f7bace8f84f317",
+  "installed_apk_matches_build": true
+}

@@ -1,0 +1,30 @@
+{
+  "server": "https://asdfgh0986.pythonanywhere.com",
+  "deployed_at": "2026-11-10T16:34:59.475652+09:00",
+  "source_directory": "/home/asdfgh0986/home-guardian-assessment02/releases/20261110-073148/PhotoBlogServer",
+  "virtualenv": "/home/asdfgh0986/.virtualenvs/home-guardian-assessment02-20261110-073148",
+  "data_directory": "/home/asdfgh0986/home-guardian-assessment02/data/20261110-073148",
+  "backup": "/home/asdfgh0986/photoblog-backups/before-assessment02-20261110-073148",
+  "database_backup_integrity": "ok",
+  "original_files_preserved": true,
+  "checks": [
+    {
+      "check": "HTTPS health",
+      "status": 200,
+      "result": {
+        "status": "ok",
+        "service": "PhotoBlogServer"
+      }
+    },
+    {
+      "check": "anonymous API rejected",
+      "status": 401
+    },
+    {
+      "check": "JWT login",
+      "status": 200,
+      "token": "[redacted]"
+    }
+  ],
+  "api_documentation": "https://help.pythonanywhere.com/pages/API/"
+}

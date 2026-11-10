@@ -3,6 +3,10 @@ package kr.ac.homeguard.photoviewer;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.Manifest;
+import android.widget.Switch;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -55,6 +59,8 @@ public class MainActivity extends Activity {
     private LinearLayout root, content;
     private TextView status;
     private EditText searchInput;
+    private TextView pushStatusView;
+    private SharedPreferences.OnSharedPreferenceChangeListener pushListener;
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -62,19 +68,25 @@ public class MainActivity extends Activity {
         base = prefs.getString("base", "http://10.0.2.2:8000");
         token = prefs.getString("token", "");
         username = prefs.getString("username", "");
+        pushListener = (p, key) -> { if ("push_status".equals(key) && pushStatusView != null) pushStatusView.setText(p.getString(key, "")); };
+        prefs.registerOnSharedPreferenceChangeListener(pushListener);
         if (android.os.Build.VERSION.SDK_INT >= 33) {
             getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
                     android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT,
-                    () -> { if (currentDetail > 0) showFeed(); else finish(); });
+                    () -> { if (currentDetail > 0 || currentDetail == -2) showFeed(); else finish(); });
         }
         if (state != null) {
             search = state.getString("search", "");
             unreadOnly = state.getBoolean("unread");
             currentDetail = state.getInt("detail", -1);
         }
+        int notificationId = notificationPost(getIntent());
+        if (notificationId > 0) currentDetail = notificationId;
         if (token.isEmpty()) showLogin();
+        else if (currentDetail == -2) showSettings();
         else if (currentDetail > 0) showDetail(currentDetail);
         else showFeed();
+        if (!token.isEmpty()) { if (prefs.getString("push_binding", "").isEmpty()) PushRegistration.newSession(this); else PushRegistration.register(this); }
     }
 
     @Override public void onSaveInstanceState(Bundle state) {
@@ -86,6 +98,7 @@ public class MainActivity extends Activity {
 
     @Override protected void onDestroy() {
         generation++;
+        if (pushListener != null) prefs.unregisterOnSharedPreferenceChangeListener(pushListener);
         workers.shutdownNow();
         super.onDestroy();
     }
@@ -94,7 +107,7 @@ public class MainActivity extends Activity {
     // This fallback is needed only on API 27–32.
     @android.annotation.SuppressLint("GestureBackNavigation")
     @Override public void onBackPressed() {
-        if (currentDetail > 0) showFeed();
+        if (currentDetail > 0 || currentDetail == -2) showFeed();
         else super.onBackPressed();
     }
 
@@ -160,6 +173,7 @@ public class MainActivity extends Activity {
     private void shell(String subtitle) {
         generation++;
         searchInput = null;
+        pushStatusView = null;
         root = column();
         root.setBackgroundColor(BG);
         root.setOnApplyWindowInsetsListener((view, insets) -> {
@@ -257,7 +271,7 @@ public class MainActivity extends Activity {
                         if (generation != viewGeneration || isFinishing()) return;
                         base = host; token = newToken; username = response.optString("username", name);
                         prefs.edit().putString("base", base).putString("token", token).putString("username", username).apply();
-                        password.setText(""); showFeed();
+                        password.setText(""); PushRegistration.newSession(this); showFeed();
                     });
                 } catch (Exception e) {
                     runOnUiThread(() -> { if (generation == viewGeneration) { login.setEnabled(true); status.setText(message(e)); } });
@@ -274,6 +288,10 @@ public class MainActivity extends Activity {
         TextView live = text("PHOTO VIEWER", 10, MUTED, true);
         heading.addView(live);
         content.addView(heading);
+        gap(content, 12);
+        Button settingsButton = button("감시 영역 · 알림 설정", false);
+        settingsButton.setOnClickListener(v -> showSettings());
+        content.addView(settingsButton, new LinearLayout.LayoutParams(-1, dp(46)));
         gap(content, 10);
         content.addView(text("카메라가 발견한 새로운 순간들", 13, MUTED, false));
         gap(content, 22);
@@ -420,6 +438,7 @@ public class MainActivity extends Activity {
                     description.addView(text(post.optString("text"), 16, INK, false));
                     gap(description, 16);
                     description.addView(text("등록: " + post.optString("author", username), 12, MUTED, false));
+                    if (!post.optString("zone_name").isEmpty()) { gap(description, 8); description.addView(text("감시 영역: " + post.optString("zone_name"), 12, GREEN, true)); }
                     content.addView(description);
                     gap(content, 20);
                     Button acknowledge = button(post.optBoolean("acknowledged") ? "✓ 확인 완료" : "이 기록 확인 완료로 표시", !post.optBoolean("acknowledged"));
@@ -481,7 +500,104 @@ public class MainActivity extends Activity {
         });
     }
 
+    private int notificationPost(Intent intent) {
+        String binding = prefs.getString("push_binding", "");
+        if (intent == null || binding.isEmpty() || !binding.equals(intent.getStringExtra("notification_binding"))) return -1;
+        return intent.getIntExtra("notification_post_id", -1);
+    }
+    @Override protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent); setIntent(intent);
+        int id = notificationPost(intent);
+        if (id > 0 && !token.isEmpty()) showDetail(id);
+    }
+
+    private void enablePush(Switch toggle) {
+        if (!BuildConfig.FCM_CONFIGURED) { toggle.setChecked(false); return; }
+        if (android.os.Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 201);
+            return;
+        }
+        prefs.edit().putBoolean("push_enabled", true).putString("push_status", "알림 기기를 연결하고 있습니다…").apply();
+        PushRegistration.newSession(this);
+    }
+    @Override public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] results) {
+        super.onRequestPermissionsResult(requestCode, permissions, results);
+        if (requestCode == 201) {
+            boolean allowed = results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED;
+            prefs.edit().putBoolean("push_enabled", allowed).putString("push_status", allowed ? "알림 기기를 연결하고 있습니다…" : "알림 권한이 허용되지 않았습니다.").apply();
+            if (allowed) PushRegistration.newSession(this);
+            if (currentDetail == -2) showSettings();
+        }
+    }
+
+    private void showSettings() {
+        currentDetail = -2;
+        shell("감시 영역과 알림");
+        Button back = button("← 감지 기록", false);
+        content.addView(back, new LinearLayout.LayoutParams(dp(132), dp(44)));
+        back.setOnClickListener(v -> showFeed());
+        gap(content, 20);
+        content.addView(text("내 공간만 감시하세요", 25, INK, true));
+        gap(content, 10);
+        content.addView(text("사진 위를 드래그하면 감시 영역이 바뀝니다.\n사람의 발밑 중심이 영역 안에 새로 들어오면 기록합니다.", 13, MUTED, false));
+        gap(content, 18);
+        status = text("설정을 불러오고 있습니다…", 12, MUTED, false);
+        content.addView(status);
+        final int requestGeneration = generation;
+        workers.execute(() -> {
+            try {
+                JSONObject settings = new JSONObject(request(base + "/api/settings/", "GET", null, token));
+                runOnUiThread(() -> {
+                    if (generation != requestGeneration || isFinishing()) return;
+                    status.setText(R.string.zone_shared_hint);
+                    gap(content, 14);
+                    Switch enabled = new Switch(this); enabled.setText("지정한 영역만 감시"); enabled.setChecked(settings.optBoolean("zone_enabled"));
+                    content.addView(enabled, new LinearLayout.LayoutParams(-1, dp(48)));
+                    EditText name = input("영역 이름", InputType.TYPE_CLASS_TEXT); name.setText(settings.optString("zone_name", "현관"));
+                    content.addView(name); gap(content, 14);
+                    ZoneImageView region = new ZoneImageView(this);
+                    String[] keys = {"left", "top", "right", "bottom"};
+                    for (int i=0; i<4; i++) region.zone[i] = (float)settings.optDouble(keys[i], i<2?0:1);
+                    region.setBackground(shape(WHITE, 12));
+                    content.addView(region, new LinearLayout.LayoutParams(-1, dp(250)));
+                    String preview = settings.optString("preview_image", "");
+                    if (!preview.isEmpty() && !preview.equals("null")) loadImage(preview, region, requestGeneration);
+                    else content.addView(text("첫 감지 사진을 등록한 뒤 영역을 지정하세요.", 12, MUTED, false));
+                    TextView coordinates = text("", 11, MUTED, false); gap(content, 8); content.addView(coordinates);
+                    region.onZoneChanged = () -> coordinates.setText(String.format(java.util.Locale.ROOT, "영역: 왼쪽 %.0f%% · 위 %.0f%% · 오른쪽 %.0f%% · 아래 %.0f%%", region.zone[0]*100,region.zone[1]*100,region.zone[2]*100,region.zone[3]*100));
+                    region.onZoneChanged.run();
+                    gap(content, 16);
+                    Button reset = button("전체 화면으로 영역 초기화", false); content.addView(reset);
+                    reset.setOnClickListener(v -> { region.zone[0]=0;region.zone[1]=0;region.zone[2]=1;region.zone[3]=1;region.invalidate();region.onZoneChanged.run(); });
+                    gap(content, 18);
+                    Button save = button("감시 영역 저장", true); content.addView(save,new LinearLayout.LayoutParams(-1,dp(52)));
+                    TextView saved = text("영역 기능을 끄면 전체 화면을 감시합니다.",12,MUTED,false); gap(content,10);content.addView(saved);
+                    save.setOnClickListener(v -> {
+                        if (region.zone[2]-region.zone[0]<.02 || region.zone[3]-region.zone[1]<.02 || name.getText().toString().trim().isEmpty()) { saved.setText("이름과 2% 이상의 너비·높이를 지정해주세요."); return; }
+                        save.setEnabled(false);saved.setText("영역을 저장하고 있습니다…");
+                        JSONObject body = new JSONObject();
+                        try { body.put("zone_enabled",enabled.isChecked()).put("zone_name",name.getText().toString().trim());for(int i=0;i<4;i++)body.put(keys[i],region.zone[i]); }
+                        catch(Exception invalid){ save.setEnabled(true);return; }
+                        workers.execute(() -> {
+                            try { requestJson(base+"/api/settings/","PATCH",body.toString(),token);
+                                runOnUiThread(() -> { if(generation==requestGeneration){save.setEnabled(true);saved.setText(R.string.zone_saved);} });
+                            } catch(Exception error){runOnUiThread(() -> {if(generation==requestGeneration){save.setEnabled(true);saved.setText(message(error));}});}
+                        });
+                    });
+                    gap(content,30);content.addView(text("새 감지 푸시 알림",20,INK,true));gap(content,12);
+                    Switch push = new Switch(this);push.setText("이 기기에서 알림 받기");push.setChecked(BuildConfig.FCM_CONFIGURED&&prefs.getBoolean("push_enabled",false));push.setEnabled(BuildConfig.FCM_CONFIGURED);content.addView(push,new LinearLayout.LayoutParams(-1,dp(48)));
+                    pushStatusView = text(BuildConfig.FCM_CONFIGURED ? prefs.getString("push_status","알림을 켜고 기기를 연결하세요.") : "Firebase 연결 설정 대기 · google-services.json이 필요합니다.",12,MUTED,false);content.addView(pushStatusView);
+                    push.setOnCheckedChangeListener((b,on) -> {if(on)enablePush(push);else{prefs.edit().putBoolean("push_enabled",false).apply();PushRegistration.unregister(this);}});
+                    if(BuildConfig.FCM_CONFIGURED){gap(content,12);Button retry=button("알림 기기 다시 연결",false);content.addView(retry);retry.setOnClickListener(v -> {if(push.isChecked())enablePush(push);else push.setChecked(true);});}
+                    JSONObject serverPush=settings.optJSONObject("push");
+                    if(serverPush!=null&&!serverPush.optBoolean("configured")){gap(content,10);content.addView(text("서버도 Firebase 발송 키 설정이 필요합니다.",12,MUTED,false));}
+                });
+            } catch(Exception error){showFailure(error,requestGeneration);}
+        });
+    }
+
     private void logout() {
+        PushRegistration.unregister(this);
         token = "";
         prefs.edit().remove("token").apply();
         images.evictAll();
@@ -523,7 +639,13 @@ public class MainActivity extends Activity {
         }
         return output.toByteArray();
     }
-    private static String request(String url, String method, String data, String auth) throws Exception {
+    static String request(String url, String method, String data, String auth) throws Exception {
+        return requestBody(url, method, data, auth, "application/x-www-form-urlencoded; charset=UTF-8");
+    }
+    static String requestJson(String url, String method, String data, String auth) throws Exception {
+        return requestBody(url, method, data, auth, "application/json; charset=UTF-8");
+    }
+    private static String requestBody(String url, String method, String data, String auth, String contentType) throws Exception {
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         try {
             connection.setRequestMethod(method);
@@ -533,11 +655,12 @@ public class MainActivity extends Activity {
             if (!auth.isEmpty()) connection.setRequestProperty("Authorization", "JWT " + auth);
             if (data != null) {
                 connection.setDoOutput(true);
-                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                connection.setRequestProperty("Content-Type", contentType);
                 try (java.io.OutputStream stream = connection.getOutputStream()) { stream.write(data.getBytes(StandardCharsets.UTF_8)); }
             }
             int code = connection.getResponseCode();
             if (code < 200 || code >= 300) throw new ApiException(code);
+            if (code == 204) return "";
             try (InputStream stream = connection.getInputStream()) { return new String(read(stream, 2 * 1024 * 1024), StandardCharsets.UTF_8); }
         } finally { connection.disconnect(); }
     }
